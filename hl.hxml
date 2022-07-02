@@ -1,0 +1,18 @@
+--times
+
+#--connect 6000
+-lib heaps
+-lib hlsdl
+
+-cp src
+
+--hl hlboot.dat
+#--hl hlc/main.c
+
+-main Game
+
+-D windowSize=1280x720
+-D heaps_add_pak_multithreaded
+#-D usePak
+
+-dce full

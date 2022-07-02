@@ -1,0 +1,17 @@
+--times
+
+#--connect 6000
+-lib heaps
+#-lib hlsdl
+
+-cp src
+
+--js main.js
+
+-main Game
+
+-D windowSize=1280x720
+-D heaps_add_pak_multithreaded
+#-D usePak
+
+-dce full
