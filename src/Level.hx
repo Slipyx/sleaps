@@ -93,6 +93,7 @@ class Level implements IUpdater {
 		return tg;
 	}
 
+	// try to add new actor to level
 	public function addActor( a: Actor ) {
 		if ( numActors >= actors.length ) {
 			throw 'Actor limit reached!';
@@ -104,19 +105,13 @@ class Level implements IUpdater {
 	public inline function destroyActor( a: Actor ) {
 		destroyedActors.add( a );
 	}
-	// return list of all active actors, optionally of only specfic class
-	public function allActors( ?a: Class<Actor> ): List<Actor> {
-		var aa = new List<Actor>();
-		if ( a == null ) a = Actor;
-		for ( i in 0...numActors ) {
-			if ( !(actors[i].destroyed) && isOfType( actors[i], a ) )
-				aa.add( actors[i] );
-		}
-		return aa;
+	// iterate on all active actors, optionally of only specfic class
+	public inline function allActors( ?a: Class<Actor> ): Iterator<Actor> {
+		return new ActorIter( a );
 	}
 
 	// return collision value at location from intgrid
-	public function getCollision( cx: Int, cy: Int ): ColVal {
+	public inline function getCollision( cx: Int, cy: Int ): ColVal {
 		return col[cy * cellWidth + cx];
 	}
 
@@ -189,5 +184,30 @@ class Level implements IUpdater {
 		}
 		// remove actors pending destruction
 		purgeActors();
+	}
+}
+
+// iterator for level's active actors
+@:access( Level )
+private class ActorIter {
+	var i: Int; // iteration
+	var a: Class<Actor>; // class to filter by, null for all actors
+
+	public function new( ?a: Class<Actor> ) {
+		i = 0;
+		this.a = a == null ? Actor : a;
+	}
+
+	public inline function hasNext(): Bool {
+		while ( i < Level.ME.numActors ) {
+			if ( !(Level.ME.actors[i].destroyed) && isOfType( Level.ME.actors[i], a ) )
+				return true;
+			i++;
+		}
+		return false;
+	}
+
+	public inline function next(): Actor {
+		return Level.ME.actors[i++];
 	}
 }

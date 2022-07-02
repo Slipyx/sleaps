@@ -15,6 +15,10 @@ class Player extends Actor {
 	public function new() {
 		super();
 
+		for ( a in level.allActors( Player ) ) {
+			trace( '${$type(a)}' );
+		}
+
 		trace( 'New player! ${location.x}' );
 		cfwd = new Point(1,0);
 		tfwd = new Point(1,0);
