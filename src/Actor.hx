@@ -31,8 +31,10 @@ class Actor implements IUpdater {
 	public var radius: Float;
 	// cell ratio velocity
 	public var velocity: Point;
+	// tag
+	public var tag: String = "None";
 	// visual
-	public var visible: Bool = true; // latent spr.visible
+	public var visible: Bool = true; // spr.visible
 	public var spr: Sprite;
 
 	// temp spawn vars for base constructor
@@ -40,7 +42,6 @@ class Actor implements IUpdater {
 	static var _st_location: Point = null;
 
 	public function new() {
-		trace( 'New Actor!' );
 		game = Game.ME;
 		level = Level.ME;
 		destroyed = false;
@@ -51,6 +52,8 @@ class Actor implements IUpdater {
 		cellLocation = new IPoint( 0, 0 );
 		cellRatio = new Point( 0, 0 );
 		velocity = new Point( 0, 0 );
+		// default tag name is name of class
+		tag = Type.getClassName( Type.getClass( this ) );
 
 		_st_location = _st_location != null ? _st_location :
 			(_st_owner != null ? _st_owner.location : new Point( 0, 0 ));
@@ -60,6 +63,9 @@ class Actor implements IUpdater {
 		radius = level.GRID / 2.0;
 
 		spr = new Sprite( game.defaultTile );
+		// snap spr pos to spawn loc
+		spr.x = _st_location.x;
+		spr.y = _st_location.y;
 		game.scroller.add( spr, G.LAYER_MAIN );
 	}
 

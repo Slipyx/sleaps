@@ -15,11 +15,11 @@ class Player extends Actor {
 	public function new() {
 		super();
 
-		for ( a in level.allActors( Player ) ) {
-			trace( '${$type(a)}' );
+		for ( a in level.allActors(  ) ) {
+			trace( '${$type(a)}, ${a.tag}' );
 		}
 
-		trace( 'New player! ${location.x}' );
+		trace( 'New player! ${location}' );
 		cfwd = new Point(1,0);
 		tfwd = new Point(1,0);
 
@@ -32,6 +32,10 @@ class Player extends Actor {
 				frames.push( spr.tile.sub( x*16,y*32,16,32, -8,-24 ) );
 			}
 		fi = 0;
+
+		// snap cam to spawn
+		game.camLocation.x = spr.x;
+		game.camLocation.y = spr.y;
 
 		// bounds
 		g = new h2d.Graphics( spr );

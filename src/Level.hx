@@ -62,15 +62,17 @@ class Level implements IUpdater {
 				cellWidth = l.__cWid;
 				cellHeight = l.__cHei;
 				col = l.intGridCsv;
+			// entity layer
+			} else if ( l.__identifier == 'Entities' ) {
+				for ( e in l.entityInstances ) {
+					if ( e.__identifier == 'PlayerStart' )
+						spawn( Player, null, new Point( e.px[0], e.px[1] ) );
+				}
 			}
 		}
 
 		st = (haxe.Timer.stamp() - st) * 1000;
 		trace( 'Loaded LDtk project in $st ms.' );
-
-		// player start
-		spawn( Actor );
-		var a = spawn( Player, null, new Point( 16, 16 ) );
 	}
 
 	// render a Tiles or AutoLayer layer to a new tilegroup and return it.

@@ -105,11 +105,12 @@ class Game extends hxd.App {
 		window.onClose = onClose;
 		onResize();
 
-		// font
+		// debug text
 		var fnt = Res.font1.toFont();
 		tf = new h2d.Text( fnt );
+		tf.setScale(2);
 		tf.x = tf.y = 1;
-		uiRoot.add( tf );
+		s2d.add( tf );
 		tf.text = 'hello there world!';
 
 		defaultTile = Tile.fromColor( 0xffff00ff, 8, 8 );

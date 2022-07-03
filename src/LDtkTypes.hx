@@ -41,6 +41,18 @@ typedef LDtkLayer = {
 	var intGridCsv: Array<Int>;
 	var autoLayerTiles: Array<LDtkTile>;
 	var gridTiles: Array<LDtkTile>;
+	var entityInstances: Array<LDtkEntity>;
+}
+
+typedef LDtkEntity = {
+	var __identifier: String;
+	var __grid: Array<Int>;
+	var __pivot: Array<Int>;
+	var iid: String;
+	var width: Int;
+	var height: Int;
+	var defUid: Int;
+	var px: Array<Int>;
 }
 
 typedef LDtkTile = {
