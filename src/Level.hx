@@ -65,8 +65,13 @@ class Level implements IUpdater {
 			// entity layer
 			} else if ( l.__identifier == 'Entities' ) {
 				for ( e in l.entityInstances ) {
-					if ( e.__identifier == 'PlayerStart' )
-						spawn( Player, null, new Point( e.px[0], e.px[1] ) );
+					var a: Actor = null;
+					switch ( e.__identifier ) {
+					case 'PlayerStart':
+						a = spawn( Player, null, new Point( e.px[0], e.px[1] ) );
+					case var ent:
+						trace( 'No such spawnable entity \'${ent}\'' );
+					}
 				}
 			}
 		}
@@ -107,9 +112,9 @@ class Level implements IUpdater {
 	public inline function destroyActor( a: Actor ) {
 		destroyedActors.add( a );
 	}
-	// iterate on all active actors, optionally of only specfic class
-	public inline function allActors( ?a: Class<Actor> ): Iterator<Actor> {
-		return new ActorIter( a );
+	// iterate on all active actors, optionally of only specfic class and/or tag
+	public inline function allActors( ?base: Class<Actor>, ?tag: String ): Iterator<Actor> {
+		return new ActorIter( base, tag );
 	}
 
 	// return collision value at location from intgrid
@@ -193,16 +198,20 @@ class Level implements IUpdater {
 @:access( Level )
 private class ActorIter {
 	var i: Int; // iteration
-	var a: Class<Actor>; // class to filter by, null for all actors
+	var base: Class<Actor>; // class to filter by, null for all actors
+	var tag: String; // tag to filter by, null for all
 
-	public function new( ?a: Class<Actor> ) {
+	public function new( ?base: Class<Actor>, ?tag: String ) {
 		i = 0;
-		this.a = a == null ? Actor : a;
+		this.base = base;
+		this.tag = tag;
 	}
 
 	public inline function hasNext(): Bool {
 		while ( i < Level.ME.numActors ) {
-			if ( !(Level.ME.actors[i].destroyed) && isOfType( Level.ME.actors[i], a ) )
+			if ( !(Level.ME.actors[i].destroyed) &&
+					(if (base != null) isOfType( Level.ME.actors[i], base ) else true) &&
+					(if (tag != null) (Level.ME.actors[i].tag == tag) else true) )
 				return true;
 			i++;
 		}

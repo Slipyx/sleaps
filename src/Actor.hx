@@ -33,6 +33,8 @@ class Actor implements IUpdater {
 	public var velocity: Point;
 	// tag
 	public var tag: String = "None";
+	// seconds after spawn until automatic destruction. 0 = inf
+	public var lifeSpan: Float = 0;
 	// visual
 	public var visible: Bool = true; // spr.visible
 	public var spr: Sprite;
@@ -185,6 +187,14 @@ class Actor implements IUpdater {
 		spr.x = M.lerp( _lastFixedLocation.x, loc.x, game.fixedAlpha );
 		spr.y = M.lerp( _lastFixedLocation.y, loc.y, game.fixedAlpha );
 		spr.visible = visible;
+		// lifespan
+		if ( !destroyed && lifeSpan > 0 ) {
+			lifeSpan -= game.tmod / G.FPS;
+			if ( lifeSpan <= 0 ) {
+				lifeSpan = 0;
+				destroyed = true;
+			}
+		}
 	}
 }
 

@@ -15,7 +15,7 @@ class Player extends Actor {
 	public function new() {
 		super();
 
-		for ( a in level.allActors(  ) ) {
+		for ( a in level.allActors( ) ) {
 			trace( '${$type(a)}, ${a.tag}' );
 		}
 
