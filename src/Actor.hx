@@ -31,9 +31,10 @@ class Actor implements IUpdater {
 	public var radius: Float;
 	// cell ratio velocity
 	public var velocity: Point;
+	public var friction: Float;
 	// tag
 	public var tag: String = "None";
-	// seconds after spawn until automatic destruction. 0 = inf
+	// seconds remaining alive until automatic destruction. 0 = inf
 	public var lifeSpan: Float = 0;
 	// visual
 	public var visible: Bool = true; // spr.visible
@@ -54,6 +55,7 @@ class Actor implements IUpdater {
 		cellLocation = new IPoint( 0, 0 );
 		cellRatio = new Point( 0, 0 );
 		velocity = new Point( 0, 0 );
+		friction = 0.8;
 		// default tag name is name of class
 		tag = Type.getClassName( Type.getClass( this ) );
 
@@ -175,8 +177,8 @@ class Actor implements IUpdater {
 			}
 		}
 		// friction
-		velocity.x *= 0.82;
-		velocity.y *= 0.82;
+		velocity.x *= friction;
+		velocity.y *= friction;
 		if ( M.abs( velocity.x ) <= 0.0005 ) velocity.x = 0;
 		if ( M.abs( velocity.y ) <= 0.0005 ) velocity.y = 0;
 	}

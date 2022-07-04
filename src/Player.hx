@@ -33,6 +33,7 @@ class Player extends Actor {
 			}
 		fi = 0;
 
+		friction = 0.72;
 		// snap cam to spawn
 		game.camLocation.x = spr.x;
 		game.camLocation.y = spr.y;
@@ -54,22 +55,22 @@ class Player extends Actor {
 	override function onPreStepX() {
 		super.onPreStepX();
 		var curcol = level.getCollision( cellLocation.x, cellLocation.y );
+		var cx = cellLocation.x;
+		var cy = cellLocation.y;
 
 		// right blocked
-		if ( cellRatio.x > 0.5 ) {
-			var rightcol = level.getCollision( cellLocation.x+1, cellLocation.y );
+		if ( cellRatio.x > 0.55 ) {
+			var rightcol = level.getCollision( cx+1, cy );
 			if ( rightcol == Col_Solid || curcol == Col_Right || rightcol == Col_Left ) {
-				cellRatio.x = 0.5;
-				velocity.x = 0;
+				cellRatio.x = 0.55;
 			}
 		}
 
 		// left blocked
-		if ( cellRatio.x < 0.5 ) {
-			var leftcol = level.getCollision( cellLocation.x-1, cellLocation.y );
+		if ( cellRatio.x < 0.45 ) {
+			var leftcol = level.getCollision( cx-1, cy );
 			if ( leftcol == Col_Solid || curcol == Col_Left || leftcol == Col_Right ) {
-				cellRatio.x = 0.5;
-				velocity.x = 0;
+				cellRatio.x = 0.45;
 			}
 		}
 	}
@@ -77,21 +78,21 @@ class Player extends Actor {
 	override function onPreStepY() {
 		super.onPreStepY();
 		var curcol = level.getCollision( cellLocation.x, cellLocation.y );
+		var cx = cellLocation.x;
+		var cy = cellLocation.y;
 
 		// bottom blocked
-		if ( cellRatio.y > 0.5 ) {
-			var bottomcol = level.getCollision( cellLocation.x, cellLocation.y+1 );
+		if ( cellRatio.y > 0.55 ) {
+			var bottomcol = level.getCollision( cx, cy+1 );
 			if ( bottomcol == Col_Solid || curcol == Col_Bottom || bottomcol == Col_Top ) {
-				cellRatio.y = 0.5;
-				velocity.y = 0;
+				cellRatio.y = 0.55;
 			}
 		}
 		// top blocked
-		if ( cellRatio.y < 0.5 ) {
-			var topcol = level.getCollision( cellLocation.x, cellLocation.y-1 );
+		if ( cellRatio.y < 0.45 ) {
+			var topcol = level.getCollision( cx, cy-1 );
 			if ( topcol == Col_Solid || curcol == Col_Top || topcol == Col_Bottom ) {
-				cellRatio.y = 0.5;
-				velocity.y = 0;
+				cellRatio.y = 0.45;
 			}
 		}
 	}
@@ -103,8 +104,9 @@ class Player extends Actor {
 		game.camLocation.y = M.lerp( game.camLocation.y, spr.y, 0.33 );
 	}
 
-	override function onFixedUpdate() {
-		super.onFixedUpdate();
+	var mvspd: Point = new Point(); // requested move dir
+	override function onPreUpdate() {
+		super.onPreUpdate();
 
 		// movement vector based on screen mouse pos distance from center of window
 		var m = new Point( game.scrMouseX, game.scrMouseY );
@@ -112,17 +114,28 @@ class Player extends Actor {
 		var gscale = G.SCALE;
 		var scrc = new Point( wnd.width/gscale/2.0, wnd.height/gscale/2.0 );
 
+		mvspd.set();
 		if ( Key.isDown( Key.MOUSE_LEFT ) ) {
-			var dst = m.distance( scrc );
+			var dst = m.distanceSq( scrc );
 			if ( dst > 0 ) {
 				tfwd.x = m.x - scrc.x;
 				tfwd.y = m.y - scrc.y;
 				tfwd.normalize();
-				cfwd.lerp( cfwd, tfwd, 0.55 );
+				cfwd.lerp( cfwd, tfwd, 0.45 );
 				cfwd.normalize();
 				g2.rotation = M.atan2( cfwd.y, cfwd.x );
 			}
-			velocity = cfwd.multiply( (1.0/G.FIXED_FPS) * tps ); // tiles per sec
+			mvspd.load( cfwd );
+		}
+	}
+
+	override function onFixedUpdate() {
+		super.onFixedUpdate();
+
+		if ( mvspd.lengthSq() > 0 ) {
+			// dont ask
+			velocity.x += mvspd.x * (1.0 / G.FIXED_FPS / 5 * 1.4) * tps;
+			velocity.y += mvspd.y * (1.0 / G.FIXED_FPS / 5 * 1.4) * tps;
 		}
 	}
 

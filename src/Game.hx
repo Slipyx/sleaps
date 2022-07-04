@@ -169,7 +169,9 @@ class Game extends hxd.App {
 	function fixedUpdate() {
 		tfup += fixedTmod;
 		if ( tfup > 3 ) {
-			tf.text = 'FPS: ${int(hxd.Timer.fps())} DC: ${engine.drawCalls}\n'+
+			var p: Player =null;
+			for (a in level.allActors(Player)) {p = cast a; break;}
+			tf.text = 'FPS: ${int(hxd.Timer.fps())} DC: ${engine.drawCalls} p:${p.cellLocation},${p.cellRatio}\nv:${p.velocity}\n'+
 			#if hl
 				'VM: ${int(hl.Gc.stats().currentMemory/1048576.0)}MB\n'+
 			#end
