@@ -15,11 +15,12 @@ class Player extends Actor {
 	public function new() {
 		super();
 
-		for ( a in level.allActors( ) ) {
-			trace( '${$type(a)}, ${a.tag}' );
+		trace( 'New player! ${location}' );
+
+		for ( a in level.allActors() ) {
+			trace( '${a.tag}' );
 		}
 
-		trace( 'New player! ${location}' );
 		cfwd = new Point(1,0);
 		tfwd = new Point(1,0);
 
@@ -104,7 +105,7 @@ class Player extends Actor {
 		game.camLocation.y = M.lerp( game.camLocation.y, spr.y, 0.33 );
 	}
 
-	var mvspd: Point = new Point(); // requested move dir
+	var mvdir: Point = new Point(); // requested move dir
 	override function onPreUpdate() {
 		super.onPreUpdate();
 
@@ -114,7 +115,7 @@ class Player extends Actor {
 		var gscale = G.SCALE;
 		var scrc = new Point( wnd.width/gscale/2.0, wnd.height/gscale/2.0 );
 
-		mvspd.set();
+		mvdir.set();
 		if ( Key.isDown( Key.MOUSE_LEFT ) ) {
 			var dst = m.distanceSq( scrc );
 			if ( dst > 0 ) {
@@ -125,17 +126,17 @@ class Player extends Actor {
 				cfwd.normalize();
 				g2.rotation = M.atan2( cfwd.y, cfwd.x );
 			}
-			mvspd.load( cfwd );
+			mvdir.load( cfwd );
 		}
 	}
 
 	override function onFixedUpdate() {
 		super.onFixedUpdate();
 
-		if ( mvspd.lengthSq() > 0 ) {
+		if ( mvdir.lengthSq() > 0 ) {
 			// dont ask
-			velocity.x += mvspd.x * (1.0 / G.FIXED_FPS / 5 * 1.4) * tps;
-			velocity.y += mvspd.y * (1.0 / G.FIXED_FPS / 5 * 1.4) * tps;
+			velocity.x += mvdir.x * (1.0 / G.FIXED_FPS / 5 * 1.4) * tps;
+			velocity.y += mvdir.y * (1.0 / G.FIXED_FPS / 5 * 1.4) * tps;
 		}
 	}
 

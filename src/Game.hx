@@ -167,10 +167,13 @@ class Game extends hxd.App {
 
 	var tfup: Float = 0;
 	function fixedUpdate() {
+		level.onFixedUpdate();
+
 		tfup += fixedTmod;
 		if ( tfup > 3 ) {
 			var p: Player =null;
-			for (a in level.allActors(Player)) {p = cast a; break;}
+			for(a in level.allActors(Player)){p=cast a;break;}
+			if ( p == null ) return;
 			tf.text = 'FPS: ${int(hxd.Timer.fps())} DC: ${engine.drawCalls} p:${p.cellLocation},${p.cellRatio}\nv:${p.velocity}\n'+
 			#if hl
 				'VM: ${int(hl.Gc.stats().currentMemory/1048576.0)}MB\n'+
@@ -178,7 +181,6 @@ class Game extends hxd.App {
 				'GPU: ${int(engine.mem.stats().totalMemory/1048576.0)}MB\nWhy hello there_font!';
 			tfup = 0;
 		}
-		level.onFixedUpdate();
 	}
 
 	override function update( dt: Float ) {

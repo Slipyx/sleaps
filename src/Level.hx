@@ -65,13 +65,7 @@ class Level implements IUpdater {
 			// entity layer
 			} else if ( l.__identifier == 'Entities' ) {
 				for ( e in l.entityInstances ) {
-					var a: Actor = null;
-					switch ( e.__identifier ) {
-					case 'PlayerStart':
-						a = spawn( Player, null, new Point( e.px[0], e.px[1] ) );
-					case var ent:
-						trace( 'No such spawnable entity \'${ent}\'' );
-					}
+					EntSpawner.spawnEntity( e );
 				}
 			}
 		}
@@ -221,4 +215,41 @@ private class ActorIter {
 	public inline function next(): Actor {
 		return Level.ME.actors[i++];
 	}
+}
+
+// spawning entities from LDtk levels
+private class EntSpawner {
+	// remapping ent names to actual class name
+	static var _remaps: Map<String, String> = [
+		'PlayerStart' => 'Player',
+		'Bush' => 'Actor',
+	];
+
+	@:access(Actor._st_location)
+	public static function spawnEntity( ent: LDtkEntity ) {
+		var cname = ent.__identifier;
+		// check for remap
+		if ( _remaps.exists( cname ) ) cname = _remaps[cname];
+
+		var eclass = Type.resolveClass( cname );
+		if ( eclass == null ) {
+			trace( 'No such spawnable entity \'${ent.__identifier}\'!' );
+			return;
+		}
+		// spawntemps hack
+		Actor._st_location = new Point( ent.px[0], ent.px[1] );
+		var a = null;
+		try {
+			a = Type.createInstance( eclass, [] );
+		} catch ( e ) {
+			trace( 'Failed to spawn entity \'${ent.__identifier}\' at ${Actor._st_location}! ${e.message}' );
+			a = null;
+			return;
+		}
+	}
+
+	// just in case resolveClass cant see the classes...
+	static var __classes: Array<Class<Actor>> = [
+		Actor, Player
+	];
 }

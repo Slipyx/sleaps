@@ -74,16 +74,14 @@ class Actor implements IUpdater {
 	}
 
 	// spawn a new actor in the level at location and with owner
-	// returns null if unable spawn in level
+	// returns null if unable to spawn in level
 	@:generic
 	public static function spawn<T: Constructible<Void->Void> & Actor>(
 			base: Class<T>, ?ownerActor: Actor = null, ?loc: Point = null ): T {
 		var a: T = null;
-
 		// set spawn temps for base constructor
 		_st_owner = ownerActor;
 		_st_location = loc;
-
 		// init and try to add to level
 		try {
 			a = new T();
@@ -91,8 +89,6 @@ class Actor implements IUpdater {
 			trace( 'Failed to spawn actor of type \'${base}\' at ${_st_location}! ${e.message}' );
 			return null;
 		}
-
-		//a.onSpawned(); // ready for play...
 		return a;
 	}
 

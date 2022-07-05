@@ -52,7 +52,14 @@ typedef LDtkEntity = {
 	var width: Int;
 	var height: Int;
 	var defUid: Int;
+	var fieldInstances: Array<LDtkField>;
 	var px: Array<Int>;
+}
+
+typedef LDtkField = {
+	var __identifier: String;
+	var __type: String;
+	var __value: Dynamic;
 }
 
 typedef LDtkTile = {
