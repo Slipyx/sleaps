@@ -232,8 +232,9 @@ private class EntSpawner {
 		if ( _remaps.exists( cname ) ) cname = _remaps[cname];
 
 		var eclass = Type.resolveClass( cname );
-		if ( eclass == null ) {
-			trace( 'No such spawnable entity \'${ent.__identifier}\'!' );
+		// if not a class or not of type Actor
+		if ( eclass == null || !isOfType( Type.createEmptyInstance( eclass ), Actor ) ) {
+			trace( 'No such spawnable entity class \'${ent.__identifier}\'!' );
 			return;
 		}
 		// spawntemps hack

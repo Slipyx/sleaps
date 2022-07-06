@@ -50,7 +50,6 @@ class Player extends Actor {
 		g2.beginFill( 0x0000ff );
 		g2.drawRect( radius, -1, 8, 2 );
 		g2.endFill();
-		trace( 'Player init!' );
 	}
 
 	override function onPreStepX() {
