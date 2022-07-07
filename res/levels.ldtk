@@ -462,20 +462,6 @@
 						},
 						{
 							"__identifier": "Bush",
-							"__grid": [10,16],
-							"__pivot": [0.5,0.5],
-							"__tags": [],
-							"__tile": { "tilesetUid": 30, "x": 32, "y": 0, "w": 16, "h": 16 },
-							"__smartColor": "#100016",
-							"iid": "ac0670f0-dbe0-11ec-8391-d5290b256e4a",
-							"width": 16,
-							"height": 16,
-							"defUid": 24,
-							"px": [168,264],
-							"fieldInstances": [{ "__identifier": "tag", "__value": null, "__type": "String", "__tile": null, "defUid": 25, "realEditorValues": [] }]
-						},
-						{
-							"__identifier": "Bush",
 							"__grid": [8,16],
 							"__pivot": [0.5,0.5],
 							"__tags": [],
@@ -514,6 +500,20 @@
 							"height": 16,
 							"defUid": 24,
 							"px": [152,232],
+							"fieldInstances": [{ "__identifier": "tag", "__value": null, "__type": "String", "__tile": null, "defUid": 25, "realEditorValues": [] }]
+						},
+						{
+							"__identifier": "Bush",
+							"__grid": [10,16],
+							"__pivot": [0.5,0.5],
+							"__tags": [],
+							"__tile": { "tilesetUid": 30, "x": 32, "y": 0, "w": 16, "h": 16 },
+							"__smartColor": "#100016",
+							"iid": "eee31a90-dbe0-11ec-b74e-43f86e205363",
+							"width": 16,
+							"height": 16,
+							"defUid": 24,
+							"px": [168,264],
 							"fieldInstances": [{ "__identifier": "tag", "__value": null, "__type": "String", "__tile": null, "defUid": 25, "realEditorValues": [] }]
 						}
 					]

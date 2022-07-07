@@ -5,28 +5,15 @@ class Actor implements IUpdater {
 	public var level(default, null): Level;
 
 	public var destroyed(default, set): Bool = false;
+	public var alive(get, never): Bool;
 	// actor that owns this actor, null for no owner
 	public var owner(default, set): Actor;
-	// actors that have this actor as owner
-	var ownees: List<Actor>;
 	// cell location
 	public var cellLocation: IPoint;
 	// ratio within cell location
 	public var cellRatio: Point;
 	// current pixel location
 	public var location(get, never): Point;
-	inline function get_location()
-		return new Point( (cellLocation.x + cellRatio.x) * level.GRID,
-			(cellLocation.y + cellRatio.y) * level.GRID );
-	// set pixel location
-	public function setLocation( x: Float, y: Float ) {
-		cellLocation.x = int(x / level.GRID);
-		cellLocation.y = int(y / level.GRID);
-		cellRatio.x = (x - cellLocation.x * level.GRID) / level.GRID;
-		cellRatio.y = (y - cellLocation.y * level.GRID) / level.GRID;
-	}
-	// previous fixed update pixel location
-	var _lastFixedLocation: Point;
 	// collision radius
 	public var radius: Float;
 	// cell ratio velocity
@@ -34,16 +21,24 @@ class Actor implements IUpdater {
 	public var friction: Float;
 	// tag
 	public var tag: String = "None";
-	// seconds remaining alive until automatic destruction. 0 = inf
+	// life
+	public var life(default, set): Float = 1;
+	// seconds until automatic death. 0 = inf.
 	public var lifeSpan: Float = 0;
 	// visual
 	public var visible: Bool = true; // spr.visible
 	public var spr: Sprite;
 
+	// actors that have this actor as owner
+	var ownees: List<Actor>;
+	// previous fixed update pixel location
+	var _lastFixedLocation: Point;
+
 	// temp spawn vars for base constructor
 	static var _st_owner: Actor = null;
 	static var _st_location: Point = null;
 
+	@:access(Level)
 	public function new() {
 		game = Game.ME;
 		level = Level.ME;
@@ -92,7 +87,12 @@ class Actor implements IUpdater {
 		return a;
 	}
 
-	// change, set, or remove the owner
+	// get pixel location
+	inline function get_location()
+		return new Point( (cellLocation.x + cellRatio.x) * level.GRID,
+			(cellLocation.y + cellRatio.y) * level.GRID );
+
+	// change, set, or remove the current owner
 	function set_owner( value: Actor ) {
 		if ( owner == value || owner == this ) return owner;
 		var pOwner = owner;
@@ -115,9 +115,20 @@ class Actor implements IUpdater {
 		return value;
 	}
 
+	// set life function. calls onDie if changes from > 0 to <= 0
+	inline function set_life( v: Float ) {
+		if ( life <= 0 ) return life = v;
+		life = v;
+		if ( life <= 0 ) onDie();
+		return life;
+	}
+
+	inline function get_alive() return !destroyed && life > 0;
+
 	// destroy and remove actor from level at end of frame
 	public inline final function destroy() { destroyed = true; }
 	// actual destruction is done when var is set
+	@:access(Level)
 	function set_destroyed( v: Bool ) {
 		// only set to true once in lifetime
 		if ( !destroyed ) {
@@ -130,8 +141,26 @@ class Actor implements IUpdater {
 		return true;
 	}
 
-	// after init and added to level...
-	//public function onSpawned() {}
+	// set pixel location
+	public function setLocation( x: Float, y: Float ) {
+		cellLocation.x = int(x / level.GRID);
+		cellLocation.y = int(y / level.GRID);
+		cellRatio.x = (x - cellLocation.x * level.GRID) / level.GRID;
+		cellRatio.y = (y - cellLocation.y * level.GRID) / level.GRID;
+	}
+
+	// subtract from life (or add...)
+	public function takeDamage( dmg: Float, ?from: Actor ) {
+		life = life - dmg;
+	}
+
+	// after level loaded and all actors spawned
+	public function onBeginPlay() {}
+
+	// when life reaches 0. by default, destroy
+	public function onDie() {
+		destroyed = true;
+	}
 
 	// when destroyed and removed from level
 	public function onDestroyed() {
@@ -186,11 +215,11 @@ class Actor implements IUpdater {
 		spr.y = M.lerp( _lastFixedLocation.y, loc.y, game.fixedAlpha );
 		spr.visible = visible;
 		// lifespan
-		if ( !destroyed && lifeSpan > 0 ) {
+		if ( !destroyed && life > 0 && lifeSpan > 0 ) {
 			lifeSpan -= game.tmod / G.FPS;
 			if ( lifeSpan <= 0 ) {
 				lifeSpan = 0;
-				destroyed = true;
+				life = 0; // onDie
 			}
 		}
 	}

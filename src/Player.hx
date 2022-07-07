@@ -17,12 +17,9 @@ class Player extends Actor {
 
 		trace( 'New player! ${location}' );
 
-		for ( a in level.allActors() ) {
-			trace( '${a.tag}' );
-		}
-
 		cfwd = new Point(1,0);
 		tfwd = new Point(1,0);
+		life = 100;
 
 		spr.tile = Res.pchar.toTile();
 		//spr.t = Tile.autoCut( Res.char.toBitmap(), 16, 16 ).main;
@@ -50,6 +47,16 @@ class Player extends Actor {
 		g2.beginFill( 0x0000ff );
 		g2.drawRect( radius, -1, 8, 2 );
 		g2.endFill();
+	}
+
+	override function onBeginPlay() {
+		super.onBeginPlay();
+
+		for ( a in level.allActors() ) {
+			trace( '${a.tag}' );
+		}
+		//lifeSpan = 4;
+		takeDamage( 100 );
 	}
 
 	override function onPreStepX() {
@@ -181,6 +188,16 @@ class Player extends Actor {
 		}*/
 
 		spr.tile = frames[int(fi)];
+	}
+
+	override function takeDamage( dmg: Float, ?from: Actor ) {
+		dmg *= 0.5;
+		super.takeDamage( dmg, from );
+	}
+
+	override function onDie() {
+		trace( 'Player died!?' );
+		//super.onDie();
 	}
 
 	override function onDestroyed() {

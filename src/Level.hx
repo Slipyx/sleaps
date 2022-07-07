@@ -72,6 +72,12 @@ class Level implements IUpdater {
 
 		st = (haxe.Timer.stamp() - st) * 1000;
 		trace( 'Loaded LDtk project in $st ms.' );
+
+		// call onBeginPlay on all active actors
+		for ( i in 0...numActors ) {
+			if ( !actors[i].destroyed )
+				actors[i].onBeginPlay();
+		}
 	}
 
 	// render a Tiles or AutoLayer layer to a new tilegroup and return it.
@@ -95,7 +101,7 @@ class Level implements IUpdater {
 	}
 
 	// try to add new actor to level
-	public function addActor( a: Actor ) {
+	function addActor( a: Actor ) {
 		if ( numActors >= actors.length ) {
 			throw 'Actor limit reached!';
 		}
@@ -103,7 +109,7 @@ class Level implements IUpdater {
 		numActors++;
 	}
 	// set actor to be destroyed and removed from level at end of frame
-	public inline function destroyActor( a: Actor ) {
+	inline function destroyActor( a: Actor ) {
 		destroyedActors.add( a );
 	}
 	// iterate on all active actors, optionally of only specfic class and/or tag

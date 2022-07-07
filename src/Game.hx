@@ -108,6 +108,7 @@ class Game extends hxd.App {
 		// debug text
 		var fnt = Res.font1.toFont();
 		tf = new h2d.Text( fnt );
+		tf.filter = new h2d.filter.Outline( 0.5 );
 		tf.setScale(2);
 		tf.x = tf.y = 1;
 		s2d.add( tf );
@@ -171,14 +172,17 @@ class Game extends hxd.App {
 
 		tfup += fixedTmod;
 		if ( tfup > 3 ) {
-			var p: Player =null;
-			for(a in level.allActors(Player)){p=cast a;break;}
-			if ( p == null ) return;
-			tf.text = 'FPS: ${int(hxd.Timer.fps())} DC: ${engine.drawCalls} p:${p.cellLocation},${p.cellRatio}\nv:${p.velocity}\n'+
+			tf.text = 'FPS: ${int(hxd.Timer.fps())} DC: ${engine.drawCalls}\n'+
 			#if hl
 				'VM: ${int(hl.Gc.stats().currentMemory/1048576.0)}MB\n'+
 			#end
-				'GPU: ${int(engine.mem.stats().totalMemory/1048576.0)}MB\nWhy hello there_font!';
+				'GPU: ${int(engine.mem.stats().totalMemory/1048576.0)}MB';
+
+			var p: Player =null;
+			for(a in level.allActors(Player)){p=cast a;break;}
+			if ( p != null )
+				tf.text += '\np:${p.cellLocation},${p.cellRatio}\nv:${p.velocity}\nlf:${p.life}';
+			
 			tfup = 0;
 		}
 	}
