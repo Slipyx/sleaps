@@ -10,7 +10,7 @@
 	},
 	"jsonVersion": "1.1.3",
 	"appBuildId": 458364,
-	"nextUid": 32,
+	"nextUid": 38,
 	"identifierStyle": "Capitalize",
 	"worldLayout": "Free",
 	"worldGridWidth": 256,
@@ -332,6 +332,93 @@
 					"allowedRefs": "OnlySame",
 					"allowedRefTags": [],
 					"tilesetUid": null
+				},
+				{
+					"identifier": "lifeSpan",
+					"__type": "Float",
+					"uid": 32,
+					"type": "F_Float",
+					"isArray": false,
+					"canBeNull": true,
+					"arrayMinLength": null,
+					"arrayMaxLength": null,
+					"editorDisplayMode": "NameAndValue",
+					"editorDisplayPos": "Above",
+					"editorAlwaysShow": false,
+					"editorCutLongValues": true,
+					"editorTextSuffix": null,
+					"editorTextPrefix": null,
+					"useForSmartColor": false,
+					"min": 0,
+					"max": null,
+					"regex": null,
+					"acceptFileTypes": null,
+					"defaultOverride": null,
+					"textLanguageMode": null,
+					"symmetricalRef": false,
+					"autoChainRef": true,
+					"allowOutOfLevelRef": true,
+					"allowedRefs": "OnlySame",
+					"allowedRefTags": [],
+					"tilesetUid": null
+				},
+				{
+					"identifier": "life",
+					"__type": "Float",
+					"uid": 33,
+					"type": "F_Float",
+					"isArray": false,
+					"canBeNull": true,
+					"arrayMinLength": null,
+					"arrayMaxLength": null,
+					"editorDisplayMode": "NameAndValue",
+					"editorDisplayPos": "Above",
+					"editorAlwaysShow": false,
+					"editorCutLongValues": true,
+					"editorTextSuffix": null,
+					"editorTextPrefix": null,
+					"useForSmartColor": false,
+					"min": 1,
+					"max": null,
+					"regex": null,
+					"acceptFileTypes": null,
+					"defaultOverride": null,
+					"textLanguageMode": null,
+					"symmetricalRef": false,
+					"autoChainRef": true,
+					"allowOutOfLevelRef": true,
+					"allowedRefs": "OnlySame",
+					"allowedRefTags": [],
+					"tilesetUid": null
+				},
+				{
+					"identifier": "destroyed",
+					"__type": "Bool",
+					"uid": 34,
+					"type": "F_Bool",
+					"isArray": false,
+					"canBeNull": false,
+					"arrayMinLength": null,
+					"arrayMaxLength": null,
+					"editorDisplayMode": "NameAndValue",
+					"editorDisplayPos": "Above",
+					"editorAlwaysShow": false,
+					"editorCutLongValues": true,
+					"editorTextSuffix": null,
+					"editorTextPrefix": null,
+					"useForSmartColor": false,
+					"min": null,
+					"max": null,
+					"regex": null,
+					"acceptFileTypes": null,
+					"defaultOverride": null,
+					"textLanguageMode": null,
+					"symmetricalRef": false,
+					"autoChainRef": true,
+					"allowOutOfLevelRef": true,
+					"allowedRefs": "OnlySame",
+					"allowedRefTags": [],
+					"tilesetUid": null
 				}
 			]
 		}
@@ -472,7 +559,12 @@
 							"height": 16,
 							"defUid": 24,
 							"px": [136,264],
-							"fieldInstances": [{ "__identifier": "tag", "__value": null, "__type": "String", "__tile": null, "defUid": 25, "realEditorValues": [] }]
+							"fieldInstances": [
+								{ "__identifier": "tag", "__value": null, "__type": "String", "__tile": null, "defUid": 25, "realEditorValues": [null] },
+								{ "__identifier": "lifeSpan", "__value": null, "__type": "Float", "__tile": null, "defUid": 32, "realEditorValues": [] },
+								{ "__identifier": "life", "__value": null, "__type": "Float", "__tile": null, "defUid": 33, "realEditorValues": [] },
+								{ "__identifier": "destroyed", "__value": false, "__type": "Bool", "__tile": null, "defUid": 34, "realEditorValues": [] }
+							]
 						},
 						{
 							"__identifier": "Bush",
@@ -486,7 +578,12 @@
 							"height": 16,
 							"defUid": 24,
 							"px": [136,296],
-							"fieldInstances": [{ "__identifier": "tag", "__value": null, "__type": "String", "__tile": null, "defUid": 25, "realEditorValues": [] }]
+							"fieldInstances": [
+								{ "__identifier": "tag", "__value": null, "__type": "String", "__tile": null, "defUid": 25, "realEditorValues": [null] },
+								{ "__identifier": "lifeSpan", "__value": null, "__type": "Float", "__tile": null, "defUid": 32, "realEditorValues": [null] },
+								{ "__identifier": "life", "__value": null, "__type": "Float", "__tile": null, "defUid": 33, "realEditorValues": [null] },
+								{ "__identifier": "destroyed", "__value": false, "__type": "Bool", "__tile": null, "defUid": 34, "realEditorValues": [null] }
+							]
 						},
 						{
 							"__identifier": "Bush",
@@ -500,7 +597,12 @@
 							"height": 16,
 							"defUid": 24,
 							"px": [152,232],
-							"fieldInstances": [{ "__identifier": "tag", "__value": null, "__type": "String", "__tile": null, "defUid": 25, "realEditorValues": [] }]
+							"fieldInstances": [
+								{ "__identifier": "tag", "__value": null, "__type": "String", "__tile": null, "defUid": 25, "realEditorValues": [null] },
+								{ "__identifier": "lifeSpan", "__value": null, "__type": "Float", "__tile": null, "defUid": 32, "realEditorValues": [] },
+								{ "__identifier": "life", "__value": null, "__type": "Float", "__tile": null, "defUid": 33, "realEditorValues": [] },
+								{ "__identifier": "destroyed", "__value": false, "__type": "Bool", "__tile": null, "defUid": 34, "realEditorValues": [] }
+							]
 						},
 						{
 							"__identifier": "Bush",
@@ -514,7 +616,12 @@
 							"height": 16,
 							"defUid": 24,
 							"px": [168,264],
-							"fieldInstances": [{ "__identifier": "tag", "__value": null, "__type": "String", "__tile": null, "defUid": 25, "realEditorValues": [] }]
+							"fieldInstances": [
+								{ "__identifier": "tag", "__value": null, "__type": "String", "__tile": null, "defUid": 25, "realEditorValues": [] },
+								{ "__identifier": "lifeSpan", "__value": null, "__type": "Float", "__tile": null, "defUid": 32, "realEditorValues": [] },
+								{ "__identifier": "life", "__value": null, "__type": "Float", "__tile": null, "defUid": 33, "realEditorValues": [] },
+								{ "__identifier": "destroyed", "__value": false, "__type": "Bool", "__tile": null, "defUid": 34, "realEditorValues": [] }
+							]
 						}
 					]
 				},

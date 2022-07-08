@@ -23,7 +23,7 @@ class Actor implements IUpdater {
 	public var tag: String = "None";
 	// life
 	public var life(default, set): Float = 1;
-	// seconds until automatic death. 0 = inf.
+	// seconds until automatic death (onDie). 0 = forever.
 	public var lifeSpan: Float = 0;
 	// visual
 	public var visible: Bool = true; // spr.visible
@@ -116,7 +116,7 @@ class Actor implements IUpdater {
 	}
 
 	// set life function. calls onDie if changes from > 0 to <= 0
-	inline function set_life( v: Float ) {
+	@:keep inline function set_life( v: Float ) {
 		if ( life <= 0 ) return life = v;
 		life = v;
 		if ( life <= 0 ) onDie();
@@ -215,7 +215,7 @@ class Actor implements IUpdater {
 		spr.y = M.lerp( _lastFixedLocation.y, loc.y, game.fixedAlpha );
 		spr.visible = visible;
 		// lifespan
-		if ( !destroyed && life > 0 && lifeSpan > 0 ) {
+		if ( alive && lifeSpan > 0 ) {
 			lifeSpan -= game.tmod / G.FPS;
 			if ( lifeSpan <= 0 ) {
 				lifeSpan = 0;
