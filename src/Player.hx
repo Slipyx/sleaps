@@ -4,7 +4,6 @@ class Player extends Actor {
 	var frames: Array<Tile>;
 	var fi: Float;
 
-	var g: h2d.Graphics;
 	var g2: h2d.Graphics;
 	// current, target forward dir
 	var cfwd: Point;
@@ -36,12 +35,6 @@ class Player extends Actor {
 		game.camLocation.x = spr.x;
 		game.camLocation.y = spr.y;
 
-		// bounds
-		g = new h2d.Graphics( spr );
-		g.lineStyle( 0.5, 0x00ff00, 1 );
-		g.drawRect( -8 , -8, 16, 16 );
-		g.lineStyle( 0.5, 0xff0000, 1 );
-		g.drawCircle( 0, 0, radius );
 		// cur fwd dir
 		g2 = new h2d.Graphics( spr );
 		g2.beginFill( 0x0000ff );
@@ -57,6 +50,12 @@ class Player extends Actor {
 		}
 		//lifeSpan = 4;
 		takeDamage( 100 );
+	}
+
+	override function onTouch( other: Actor ) {
+		//super.onTouch( other );
+		//trace('Player touched!');
+		//other.destroy();
 	}
 
 	override function onPreStepX() {

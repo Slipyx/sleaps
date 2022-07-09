@@ -16,6 +16,8 @@ class Actor implements IUpdater {
 	public var location(get, never): Point;
 	// collision radius
 	public var radius: Float;
+	// whether onTouch should be called between other colliding actors
+	public var collideActors: Bool = true;
 	// cell ratio velocity
 	public var velocity: Point;
 	public var friction: Float;
@@ -155,7 +157,14 @@ class Actor implements IUpdater {
 	}
 
 	// after level loaded and all actors spawned
-	public function onBeginPlay() {}
+	public function onBeginPlay() {
+		// debug bounds
+		var g = new h2d.Graphics( spr );
+		g.lineStyle( 0.5, 0x00ff00, 0.5 );
+		g.drawRect( -8 , -8, 16, 16 );
+		g.lineStyle( 0.5, 0xff0000, 0.5 );
+		g.drawCircle( 0, 0, radius );
+	}
 
 	// when life reaches 0. by default, destroy
 	public function onDie() {
@@ -174,6 +183,9 @@ class Actor implements IUpdater {
 		ownees.clear();
 	}
 
+	// when another actor is touching
+	function onTouch( other: Actor ) {}
+
 	// prestep collision / physics checks
 	function onPreStepX() {}
 	function onPreStepY() {}
@@ -185,6 +197,34 @@ class Actor implements IUpdater {
 
 	public function onFixedUpdate() {
 		_lastFixedLocation.load( location );
+		// actor collision
+		for ( other in level.allActors() ) {
+			// fast check cell distance
+			if ( other != this && !(other.destroyed) &&
+					M.abs( other.cellLocation.distanceSq( cellLocation ) ) <= 4 ) {
+				// fast check pixel distance
+				var r = radius + other.radius;
+				var oloc = other.location;
+				var loc = location;
+				var d2 = oloc.distanceSq( loc );
+				if ( d2 < (r * r) ) {
+					// touching
+					if ( collideActors && other.collideActors ) {
+						other.onTouch( this );
+						// block/bump
+						// var l = M.sqrt( d2 );
+						// var depth = r - l;
+						// var power = depth / (r);
+						// var n = l != 0 ? oloc.sub( loc ).multiply( 1.0 / l ) : new Point(0,1);
+						// if ( other.velocity.x == 0 && other.velocity.y == 0 ) {
+						// 	setLocation( loc.x - (n.x*(depth)), loc.y - (n.y*(depth)) );
+						// 	onTouch( other );
+						// }
+					}
+				}
+			}
+		}
+
 		// step through movement. adopted from deepnight's gamebase entity
 		var steps = M.ceil( (M.abs( velocity.x ) + M.abs( velocity.y )) / 0.33 );
 		if ( steps > 0 ) {
