@@ -16,8 +16,10 @@ class Actor implements IUpdater {
 	public var location(get, never): Point;
 	// collision radius
 	public var radius: Float;
-	// whether onTouch should be called between other colliding actors
-	public var collideActors: Bool = true;
+	// call onTouch when another touching actor overlaps
+	public var touchActors: Bool = true;
+	// bump into other bumping actors and call onBump
+	public var bumpActors: Bool = true;
 	// cell ratio velocity
 	public var velocity: Point;
 	public var friction: Float;
@@ -35,6 +37,10 @@ class Actor implements IUpdater {
 	var ownees: List<Actor>;
 	// previous fixed update pixel location
 	var _lastFixedLocation: Point;
+	// list of touching actors
+	var touching: List<Actor>;
+	// actors touching during current frame, for internal use only
+	var _curTouching: List<Actor>;
 
 	// temp spawn vars for base constructor
 	static var _st_owner: Actor = null;
@@ -49,6 +55,8 @@ class Actor implements IUpdater {
 
 		ownees = new List<Actor>();
 		owner = _st_owner;
+		touching = new List<Actor>();
+		_curTouching = new List<Actor>();
 		cellLocation = new IPoint( 0, 0 );
 		cellRatio = new Point( 0, 0 );
 		velocity = new Point( 0, 0 );
@@ -61,9 +69,10 @@ class Actor implements IUpdater {
 
 		setLocation( _st_location.x, _st_location.y );
 		_lastFixedLocation = location.clone();
-		radius = level.GRID / 2.0;
+		radius = level.GRID / 2.67;
 
-		spr = new Sprite( game.defaultTile );
+		spr = new Sprite( Res.pot.toTile() );
+		spr.tile.setCenterRatio();
 		// snap spr pos to spawn loc
 		spr.x = _st_location.x;
 		spr.y = _st_location.y;
@@ -117,7 +126,7 @@ class Actor implements IUpdater {
 		return value;
 	}
 
-	// set life function. calls onDie if changes from > 0 to <= 0
+	// life setter. calls onDie if changes from > 0 to <= 0
 	@:keep inline function set_life( v: Float ) {
 		if ( life <= 0 ) return life = v;
 		life = v;
@@ -160,9 +169,9 @@ class Actor implements IUpdater {
 	public function onBeginPlay() {
 		// debug bounds
 		var g = new h2d.Graphics( spr );
-		g.lineStyle( 0.5, 0x00ff00, 0.5 );
-		g.drawRect( -8 , -8, 16, 16 );
-		g.lineStyle( 0.5, 0xff0000, 0.5 );
+		//g.lineStyle( 0.5, 0x00ff00, 0.5 );
+		//g.drawRect( -8 , -8, 16, 16 );
+		g.lineStyle( 0.5, 0xff0000, 0.25 );
 		g.drawCircle( 0, 0, radius );
 	}
 
@@ -181,10 +190,20 @@ class Actor implements IUpdater {
 		for ( o in ownees )
 			o.owner = null;
 		ownees.clear();
+		touching.clear();
+		touching = null;
+		_curTouching.clear();
+		_curTouching = null;
 	}
 
-	// when another actor is touching
-	function onTouch( other: Actor ) {}
+	// when another actor touches
+	function onTouch( other: Actor ) {
+		//trace('Actor has been touched!');
+	}
+	// when another bumping actor bumps into this bumping actor
+	function onBump( other: Actor ) {
+		//trace('Actor has been bumped!');
+	}
 
 	// prestep collision / physics checks
 	function onPreStepX() {}
@@ -195,9 +214,10 @@ class Actor implements IUpdater {
 
 	public function onUpdate() {}
 
-	public function onFixedUpdate() {
-		_lastFixedLocation.load( location );
-		// actor collision
+	// actor to actor collisions
+	final function handleActorCollisions() {
+		_curTouching.clear();
+		// actor collisions
 		for ( other in level.allActors() ) {
 			// fast check cell distance
 			if ( other != this && !(other.destroyed) &&
@@ -209,22 +229,51 @@ class Actor implements IUpdater {
 				var d2 = oloc.distanceSq( loc );
 				if ( d2 < (r * r) ) {
 					// touching
-					if ( collideActors && other.collideActors ) {
-						other.onTouch( this );
-						// block/bump
-						// var l = M.sqrt( d2 );
-						// var depth = r - l;
-						// var power = depth / (r);
-						// var n = l != 0 ? oloc.sub( loc ).multiply( 1.0 / l ) : new Point(0,1);
-						// if ( other.velocity.x == 0 && other.velocity.y == 0 ) {
-						// 	setLocation( loc.x - (n.x*(depth)), loc.y - (n.y*(depth)) );
-						// 	onTouch( other );
-						// }
+					if ( touchActors && (other.touchActors || other.bumpActors) ) {
+						// bumping
+						if ( bumpActors && other.bumpActors ) {
+							var l = M.sqrt( d2 );
+							var depth = r - l;
+							var power = depth / (r);
+							var n = l != 0 ? oloc.sub( loc ).multiply( 1.0 / l ) : new Point(0,1);
+							//setLocation( loc.x - (n.x*(depth)), loc.y - (n.y*(depth)) );
+							velocity.x -= n.x * power * 0.25;
+							velocity.y -= n.y * power * 0.25;
+							other.onBump( this );
+						} else {
+							_curTouching.add( other );
+						}
 					}
 				}
 			}
 		}
+		// check for initial touch
+		for ( ct in _curTouching ) {
+			var wastouching = false;
+			for ( t in touching ) {
+				if ( ct == t ) { wastouching = true; break; }
+			}
+			if ( !wastouching ) {
+				touching.add( ct );
+				ct.onTouch( this );
+			}
+		}
+		// untouched
+		for ( t in touching ) {
+			var istouching = false;
+			for ( ct in _curTouching ) {
+				if ( ct == t ) { istouching = true; break; }
+			}
+			if ( !istouching ) {
+				touching.remove( t );
+			}
+		}
+	}
 
+	public function onFixedUpdate() {
+		_lastFixedLocation.load( location );
+		// actor collisions.
+		handleActorCollisions();
 		// step through movement. adopted from deepnight's gamebase entity
 		var steps = M.ceil( (M.abs( velocity.x ) + M.abs( velocity.y )) / 0.33 );
 		if ( steps > 0 ) {

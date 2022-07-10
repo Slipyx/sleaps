@@ -14,6 +14,10 @@ class Player extends Actor {
 	public function new() {
 		super();
 
+		touchActors = true;
+		bumpActors = true;
+		//radius = 6;
+
 		trace( 'New player! ${location}' );
 
 		cfwd = new Point(1,0);
@@ -54,8 +58,13 @@ class Player extends Actor {
 
 	override function onTouch( other: Actor ) {
 		//super.onTouch( other );
-		//trace('Player touched!');
+		//trace('Player has been touched!');
 		//other.destroy();
+	}
+
+	override function onBump( other: Actor ) {
+		//trace( 'Player has been bumped!' );
+		takeDamage(1);
 	}
 
 	override function onPreStepX() {
@@ -196,6 +205,7 @@ class Player extends Actor {
 
 	override function onDie() {
 		trace( 'Player died!?' );
+		life = 100;
 		//super.onDie();
 	}
 
