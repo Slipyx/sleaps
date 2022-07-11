@@ -22,7 +22,12 @@ class Actor implements IUpdater {
 	public var bumpActors: Bool = true;
 	// cell ratio velocity
 	public var velocity: Point;
+	// velocity friction
 	public var friction: Float;
+	// the force at which this actor repels away from other bumping actors
+	// if 0, actor is treated as static and other actors use brute force
+	// repositioning instead of their bumpForce
+	public var bumpForce: Float;
 	// tag
 	public var tag: String = "None";
 	// life
@@ -60,7 +65,9 @@ class Actor implements IUpdater {
 		cellLocation = new IPoint( 0, 0 );
 		cellRatio = new Point( 0, 0 );
 		velocity = new Point( 0, 0 );
-		friction = 0.8;
+		friction = 0.1; // 0.8
+		bumpForce = 0.5; // 0.25
+		radius = level.GRID / 2.67;
 		// default tag name is name of class
 		tag = Type.getClassName( Type.getClass( this ) );
 
@@ -69,7 +76,6 @@ class Actor implements IUpdater {
 
 		setLocation( _st_location.x, _st_location.y );
 		_lastFixedLocation = location.clone();
-		radius = level.GRID / 2.67;
 
 		spr = new Sprite( Res.pot.toTile() );
 		spr.tile.setCenterRatio();
@@ -235,11 +241,20 @@ class Actor implements IUpdater {
 							var l = M.sqrt( d2 );
 							var depth = r - l;
 							var power = depth / (r);
+							// normal from this to other
 							var n = l != 0 ? oloc.sub( loc ).multiply( 1.0 / l ) : new Point(0,1);
-							//setLocation( loc.x - (n.x*(depth)), loc.y - (n.y*(depth)) );
-							velocity.x -= n.x * power * 0.25;
-							velocity.y -= n.y * power * 0.25;
-							other.onBump( this );
+							// if other has 0 bumpforce, treat as static and brute force reposition
+							if ( other.bumpForce == 0 )
+								setLocation( loc.x - (n.x*(depth)), loc.y - (n.y*(depth)) );
+							// use bump force
+							else {
+								velocity.x -= n.x * power * bumpForce;
+								velocity.y -= n.y * power * bumpForce;
+							}
+							// only call onBump during movement
+							if ( other.velocity.lengthSq() > 0 ||
+									(other.bumpForce == 0 && velocity.lengthSq() > 0) )
+								other.onBump( this );
 						} else {
 							_curTouching.add( other );
 						}

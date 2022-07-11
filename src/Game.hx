@@ -231,6 +231,8 @@ class Game extends hxd.App {
 		scrMouseX = (wnd.mouseX / gScale);
 		scrMouseY = (wnd.mouseY / gScale);
 
+		// sort actors by y pos
+		scroller.ysort( G.LAYER_MAIN );
 		// update layer scaling
 		scroller.setScale( gScale );
 		uiRoot.setScale( gScale );

@@ -16,7 +16,9 @@ class Player extends Actor {
 
 		touchActors = true;
 		bumpActors = true;
-		//radius = 6;
+		radius = level.GRID / 2.67;
+		friction = 0.72;
+		bumpForce = 0.25;
 
 		trace( 'New player! ${location}' );
 
@@ -34,7 +36,6 @@ class Player extends Actor {
 			}
 		fi = 0;
 
-		friction = 0.72;
 		// snap cam to spawn
 		game.camLocation.x = spr.x;
 		game.camLocation.y = spr.y;
