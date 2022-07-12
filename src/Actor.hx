@@ -176,7 +176,7 @@ class Actor implements IUpdater {
 		var g = new h2d.Graphics( spr );
 		//g.lineStyle( 0.5, 0x00ff00, 0.5 );
 		//g.drawRect( -8 , -8, 16, 16 );
-		g.lineStyle( 0.5, 0xff0000, 0.25 );
+		g.lineStyle( 0.5, 0xff0000, 0.5 );
 		g.drawCircle( 0, 0, radius );
 	}
 
@@ -239,7 +239,8 @@ class Actor implements IUpdater {
 						if ( bumpActors && other.bumpActors ) {
 							var l = M.sqrt( d2 );
 							var depth = r - l;
-							var power = depth / (r);
+							// * 2 since we only apply bumpForce to one actor in each pair
+							var power = depth / (r) * 2;
 							// normal from this to other
 							var n = l != 0 ? oloc.sub( loc ).multiply( 1.0 / l ) : new Point(0,1);
 							// if other has 0 bumpforce, treat as static and brute force reposition
@@ -247,6 +248,7 @@ class Actor implements IUpdater {
 								setLocation( loc.x - (n.x*(depth)), loc.y - (n.y*(depth)) );
 							// use bump force
 							else {
+								// note: should apply opposing bumpForce to both actors?
 								velocity.x -= n.x * power * bumpForce;
 								velocity.y -= n.y * power * bumpForce;
 							}

@@ -10,12 +10,13 @@ class Enemy extends Actor {
 		super();
 		touchActors = true;
 		bumpActors = true;
-		friction = 0.1;
-		bumpForce = 0.5;
+		friction = 0.2;
+		bumpForce = 0.2;
 		radius = 6;
 
-		spr.tile = Res.spider.toTile();
+		spr.tile = Res.ghost.toTile();
 		frames = spr.tile.gridFlatten( 16, -8, -8 );
+		cf = G.rand.uint() % 2;
 	}
 
 	override function onBeginPlay() {
@@ -30,19 +31,20 @@ class Enemy extends Actor {
 		super.onFixedUpdate();
 
 		var dirToP = p.location.sub( location ).normalized();
-		velocity.x += dirToP.x * 0.08;
-		velocity.y += dirToP.y * 0.08;
+		velocity.x += dirToP.x * 0.03;
+		velocity.y += dirToP.y * 0.03;
 	}
 
 	override function onPostUpdate() {
 		super.onPostUpdate();
-		cf += 12 / G.FPS * game.tmod;
 		spr.tile = frames[int(cf) % frames.length];
+		cf += 6 / G.FPS * game.tmod;
 	}
 
 	override function onBump( other: Actor ) {
-		if ( isOfType( other, Player ) )
+		if ( isOfType( other, Player ) ) {
 			other.takeDamage( 0.05 );
+		}
 	}
 
 	override function onPreStepX() {
