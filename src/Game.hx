@@ -181,7 +181,7 @@ class Game extends hxd.App {
 			var p: Player =null;
 			for(a in level.allActors(Player)){p=cast a;break;}
 			if ( p != null )
-				tf.text += '\np:${p.cellLocation},${p.cellRatio}\nv:${p.velocity}\nlf:${p.life}';
+				tf.text += '\np:${p.cellLocation},${p.cellRatio}\nv:${p.velocity}\nlf:${int(p.life)}';
 			
 			tfup = 0;
 		}

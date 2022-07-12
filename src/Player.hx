@@ -8,8 +8,8 @@ class Player extends Actor {
 	// current, target forward dir
 	var cfwd: Point;
 	var tfwd: Point;
-	var tps = 5; // 5
-	var afps = 6; // 6
+	var tps = 7; // 5
+	var afps = 9; // 6
 
 	public function new() {
 		super();
@@ -18,7 +18,7 @@ class Player extends Actor {
 		bumpActors = true;
 		radius = level.GRID / 2.67;
 		friction = 0.72;
-		bumpForce = 0.25;
+		bumpForce = 0.01;//0.25;
 
 		trace( 'New player! ${location}' );
 
@@ -50,9 +50,6 @@ class Player extends Actor {
 	override function onBeginPlay() {
 		super.onBeginPlay();
 
-		for ( a in level.allActors() ) {
-			trace( '${a.tag}' );
-		}
 		//lifeSpan = 4;
 		takeDamage( 100 );
 	}
@@ -65,7 +62,7 @@ class Player extends Actor {
 
 	override function onBump( other: Actor ) {
 		//trace( 'Player has been bumped!' );
-		takeDamage(1);
+		//takeDamage(1);
 	}
 
 	override function onPreStepX() {

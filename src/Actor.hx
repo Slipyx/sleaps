@@ -17,9 +17,9 @@ class Actor implements IUpdater {
 	// collision radius
 	public var radius: Float;
 	// call onTouch when another touching actor overlaps
-	public var touchActors: Bool = true;
+	public var touchActors: Bool = false;
 	// bump into other bumping actors and call onBump
-	public var bumpActors: Bool = true;
+	public var bumpActors: Bool = false;
 	// cell ratio velocity
 	public var velocity: Point;
 	// velocity friction
@@ -65,8 +65,8 @@ class Actor implements IUpdater {
 		cellLocation = new IPoint( 0, 0 );
 		cellRatio = new Point( 0, 0 );
 		velocity = new Point( 0, 0 );
-		friction = 0.1; // 0.8
-		bumpForce = 0.5; // 0.25
+		friction = 0.8; // 0.8
+		bumpForce = 0.25; // 0.25
 		radius = level.GRID / 2.67;
 		// default tag name is name of class
 		tag = Type.getClassName( Type.getClass( this ) );
@@ -77,8 +77,7 @@ class Actor implements IUpdater {
 		setLocation( _st_location.x, _st_location.y );
 		_lastFixedLocation = location.clone();
 
-		spr = new Sprite( Res.pot.toTile() );
-		spr.tile.setCenterRatio();
+		spr = new Sprite( game.defaultTile );
 		// snap spr pos to spawn loc
 		spr.x = _st_location.x;
 		spr.y = _st_location.y;

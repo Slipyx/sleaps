@@ -227,8 +227,7 @@ private class ActorIter {
 private class EntSpawner {
 	// remapping ent names to actual class name
 	static var _remaps: Map<String, String> = [
-		'PlayerStart' => 'Player',
-		'Bush' => 'Actor',
+		'PlayerStart' => 'Player'
 	];
 
 	@:access(Actor._st_location)
@@ -258,15 +257,14 @@ private class EntSpawner {
 		for ( f in ent.fieldInstances ) {
 			if ( f.__value == null ) continue;
 			if ( afields.contains( f.__identifier ) ) {
-				trace( 'Setting ${ent.__identifier} field ${f.__identifier} to ${f.__value}' );
 				// note: inline setters might not work here with DCE=full
 				Reflect.setProperty( a, f.__identifier, f.__value );
 			}
 		}
 	}
 
-	// just in case resolveClass cant see the classes...
+	// for resolveClass visibility...
 	static var __classes: Array<Class<Actor>> = [
-		Actor, Player
+		Actor, Player, Enemy
 	];
 }
