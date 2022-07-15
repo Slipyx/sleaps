@@ -28,5 +28,5 @@ class Global {
 	public static final LAYER_UI = _li++;
 
 	// random
-	public static var rand: Rand;
+	public static var rand: lib.Rand;
 }

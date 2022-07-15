@@ -2,18 +2,20 @@
 package;
 
 class Enemy extends Actor {
-	var p: Player;
+	var pl: Player;
 	var frames: Array<Tile>;
 	var cf = 0.0;
+	var lastPlLoc: Point;
 
 	function new() {
 		super();
 		touchActors = true;
 		bumpActors = true;
-		friction = 0.2;
+		friction = 0.5;
 		bumpForce = 0.2;
 		radius = 6;
 
+		lastPlLoc = location;
 		spr.tile = Res.ghost.toTile();
 		frames = spr.tile.gridFlatten( 16, -8, -8 );
 		cf = G.rand.uint() % 2;
@@ -22,17 +24,33 @@ class Enemy extends Actor {
 	override function onBeginPlay() {
 		super.onBeginPlay();
 		// get ref to player
-		for ( a in level.allActors( Player ) ) {
-			p = cast a;
-		}
+		pl = Player.ME;
+	}
+
+	inline function losCanPass( tx: Int, ty: Int ): Bool {
+		// target is solid
+		if ( level.getCollision( tx, ty ) == Col_Solid ) return false;
+
+		return true;
 	}
 
 	override function onFixedUpdate() {
 		super.onFixedUpdate();
 
-		var dirToP = p.location.sub( location ).normalized();
-		velocity.x += dirToP.x * 0.03;
-		velocity.y += dirToP.y * 0.03;
+		spr.colorAdd = new h3d.Vector(1);
+		// line of sight
+		if ( lib.PathFinder.checkLine( cellLocation.x, cellLocation.y,
+				pl.cellLocation.x, pl.cellLocation.y, losCanPass ) ) {
+			lastPlLoc = pl.location;
+			spr.colorAdd.r = 0;
+		}
+
+		var dirToP = lastPlLoc.sub( location ).normalized();
+		var dist = lastPlLoc.distanceSq( location );
+		if ( dist > 256 ) {
+			velocity.x += dirToP.x * 0.02;
+			velocity.y += dirToP.y * 0.02;
+		}
 	}
 
 	override function onPostUpdate() {

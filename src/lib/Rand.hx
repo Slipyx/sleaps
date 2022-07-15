@@ -1,5 +1,5 @@
 // 64bit random gen based on xoshiro256**
-package;
+package lib;
 
 class Rand {
 	var state: haxe.ds.Vector<Int64>;

@@ -56,7 +56,7 @@ class Game extends hxd.App {
 		super.init();
 		trace( ':: Game.init ::' );
 
-		G.rand = new Rand( Std.random( 0x7fffffff ) );
+		G.rand = new lib.Rand( Std.random( 0x7fffffff ) );
 		#if hl hl.Gc.enable( true ); #end
 
 		hxd.Timer.smoothFactor = 0.4;

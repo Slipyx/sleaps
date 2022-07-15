@@ -1,6 +1,8 @@
 package;
 
 class Player extends Actor {
+	// static reference to single player
+	public static var ME: Player = null;
 	var frames: Array<Tile>;
 	var fi: Float;
 
@@ -13,6 +15,7 @@ class Player extends Actor {
 
 	public function new() {
 		super();
+		ME = this;
 
 		touchActors = true;
 		bumpActors = true;
