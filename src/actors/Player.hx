@@ -1,4 +1,4 @@
-package;
+package actors;
 
 class Player extends Actor {
 	// static reference to single player

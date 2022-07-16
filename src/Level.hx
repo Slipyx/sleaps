@@ -1,6 +1,7 @@
 package;
 
 import LDtkTypes;
+import actors.*;
 
 enum abstract ColVal(Int) from Int to Int {
 	var Col_None;
@@ -236,24 +237,11 @@ private class EntSpawner {
 		// check for remap
 		if ( _remaps.exists( cname ) ) cname = _remaps[cname];
 
-		var eclass = Type.resolveClass( cname );
-		// if not a class or not of type Actor
-		if ( eclass == null || !isOfType( Type.createEmptyInstance( eclass ), Actor ) ) {
-			trace( 'No such spawnable entity class \'${ent.__identifier}\'!' );
-			return;
-		}
-		// spawntemps hack
-		Actor._st_location = new Point( ent.px[0], ent.px[1] );
-		var a = null;
-		try {
-			a = Type.createInstance( eclass, [] );
-		} catch ( e ) {
-			trace( 'Failed to spawn entity \'${ent.__identifier}\' at ${Actor._st_location}! ${e.message}' );
-			a = null;
-			return;
-		}
+		var a = Actor.spawnByName( cname, null, new Point( ent.px[0], ent.px[1] ) );
+		if ( a == null ) return;
+
 		// rudimentary entity fields parsing
-		var afields = Type.getInstanceFields( eclass );
+		var afields = Type.getInstanceFields( Type.getClass( a ) );
 		for ( f in ent.fieldInstances ) {
 			if ( f.__value == null ) continue;
 			if ( afields.contains( f.__identifier ) ) {
@@ -265,6 +253,6 @@ private class EntSpawner {
 
 	// for resolveClass visibility...
 	static var __classes: Array<Class<Actor>> = [
-		Actor, Player, Enemy
+		Actor, Player, Enemy, Spawner
 	];
 }

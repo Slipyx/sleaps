@@ -178,8 +178,8 @@ class Game extends hxd.App {
 			#end
 				'GPU: ${int(engine.mem.stats().totalMemory/1048576.0)}MB';
 
-			var p: Player =null;
-			for(a in level.allActors(Player)){p=cast a;break;}
+			var p: actors.Player =null;
+			for(a in level.allActors(actors.Player)){p=cast a;break;}
 			if ( p != null )
 				tf.text += '\np:${p.cellLocation},${p.cellRatio}\nv:${p.velocity}\nlf:${int(p.life)}';
 			

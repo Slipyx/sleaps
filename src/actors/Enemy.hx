@@ -1,5 +1,5 @@
 // your worse enemy
-package;
+package actors;
 
 class Enemy extends Actor {
 	var pl: Player;
@@ -25,6 +25,7 @@ class Enemy extends Actor {
 		super.onBeginPlay();
 		// get ref to player
 		pl = Player.ME;
+		lifeSpan = 6;
 	}
 
 	inline function losCanPass( px: Int, py: Int, tx: Int, ty: Int ): Bool {
@@ -61,31 +62,35 @@ class Enemy extends Actor {
 		var uc = level.getCollision( px, py - 1 );
 		// diag up/left
 		if ( dx == -1 && dy == -1 ) {
-			if ( pc == Col_Left || pc == Col_Top ) return false;
-			if ( ((lc == Col_Solid || lc == Col_Right || lc == Col_Top) &&
-				 (uc == Col_Solid || uc == Col_Bottom || uc == Col_Left)) ||
-				 (tc == Col_Bottom || tc == Col_Right) ) return false;
+			if ( pc == Col_Left || pc == Col_Top ||
+				 tc == Col_Bottom || tc == Col_Right ||
+				 lc == Col_Solid || lc == Col_Right || lc == Col_Top ||
+				 uc == Col_Solid || uc == Col_Bottom || uc == Col_Left )
+				return false;
 		}
 		// diag up/right
 		if ( dx == 1 && dy == -1 ) {
-			if ( pc == Col_Right || pc == Col_Top ) return false;
-			if ( ((rc == Col_Solid || rc == Col_Left || rc == Col_Top) &&
-				 (uc == Col_Solid || uc == Col_Bottom || uc == Col_Right)) ||
-				 (tc == Col_Bottom || tc == Col_Left) ) return false;
+			if ( pc == Col_Right || pc == Col_Top ||
+				 tc == Col_Bottom || tc == Col_Left || 
+				 rc == Col_Solid || rc == Col_Left || rc == Col_Top ||
+				 uc == Col_Solid || uc == Col_Bottom || uc == Col_Right )
+				return false;
 		}
 		// diag down/left
 		if ( dx == -1 && dy == 1 ) {
-			if ( pc == Col_Left || pc == Col_Bottom ) return false;
-			if ( ((lc == Col_Solid || lc == Col_Right || lc == Col_Bottom) &&
-				 (dc == Col_Solid || dc == Col_Top || dc == Col_Left)) ||
-				 (tc == Col_Top || tc == Col_Right) ) return false;
+			if ( pc == Col_Left || pc == Col_Bottom ||
+				 tc == Col_Top || tc == Col_Right ||
+				 lc == Col_Solid || lc == Col_Right || lc == Col_Bottom ||
+				 dc == Col_Solid || dc == Col_Top || dc == Col_Left )
+				return false;
 		}
 		// diag down/right
 		if ( dx == 1 && dy == 1 ) {
-			if ( pc == Col_Right || pc == Col_Bottom ) return false;
-			if ( ((rc == Col_Solid || rc == Col_Left || rc == Col_Bottom) &&
-				 (dc == Col_Solid || dc == Col_Top || dc == Col_Right)) ||
-				 (tc == Col_Top || tc == Col_Left) ) return false;
+			if ( pc == Col_Right || pc == Col_Bottom ||
+				 tc == Col_Top || tc == Col_Left ||
+				 rc == Col_Solid || rc == Col_Left || rc == Col_Bottom ||
+				 dc == Col_Solid || dc == Col_Top || dc == Col_Right )
+				return false;
 		}
 
 		return true;
@@ -114,6 +119,8 @@ class Enemy extends Actor {
 		super.onPostUpdate();
 		spr.tile = frames[int(cf) % frames.length];
 		cf += 6 / G.FPS * game.tmod;
+		// fade out
+		spr.alpha = M.min( 1.0, (lifeSpan) / 1 );
 	}
 
 	override function onBump( other: Actor ) {

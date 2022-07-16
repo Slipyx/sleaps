@@ -85,7 +85,7 @@ class Actor implements IUpdater {
 	}
 
 	// spawn a new actor in the level at location and with owner
-	// returns null if unable to spawn in level
+	// invokes onBeginPlay on success. returns null if unable to spawn in level
 	@:generic
 	public static function spawn<T: Constructible<Void->Void> & Actor>(
 			base: Class<T>, ?ownerActor: Actor = null, ?loc: Point = null ): T {
@@ -99,6 +99,27 @@ class Actor implements IUpdater {
 		} catch ( e ) {
 			trace( 'Failed to spawn actor of type \'${base}\' at ${_st_location}! ${e.message}' );
 			return null;
+		}
+		a.onBeginPlay();
+		return a;
+	}
+	// spawn by class name string from actors package. note: does NOT call onBeginPlay
+	public static function spawnByName( name: String, ?ownerActor: Actor = null, ?loc: Point = null ) {
+		name = "actors."+name;
+		var aclass = Type.resolveClass( name );
+		// if not a class or not of type Actor
+		if ( aclass == null || !isOfType( Type.createEmptyInstance( aclass ), Actor ) ) {
+			trace( 'No such spawnable class \'${name}\'!' );
+			return null;
+		}
+		_st_owner = ownerActor;
+		_st_location = loc;
+		var a = null;
+		try {
+			a = Type.createInstance( aclass, [] );
+		} catch ( e ) {
+			trace( 'Failed to spawn actor \'${name}\' at ${_st_location}! ${e.message}' );
+			a = null;
 		}
 		return a;
 	}
