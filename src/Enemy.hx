@@ -27,9 +27,66 @@ class Enemy extends Actor {
 		pl = Player.ME;
 	}
 
-	inline function losCanPass( tx: Int, ty: Int ): Bool {
+	inline function losCanPass( px: Int, py: Int, tx: Int, ty: Int ): Bool {
+		// initial check
+		if ( px == tx && py == ty )
+			return level.getCollision( tx, ty ) != Col_Solid;
 		// target is solid
 		if ( level.getCollision( tx, ty ) == Col_Solid ) return false;
+
+		var dx = tx - px;
+		var dy = ty - py;
+		var pc = level.getCollision( px, py );
+		var tc = level.getCollision( tx, ty );
+		// up
+		if ( dx == 0 && dy == -1 ) {
+			if ( pc == Col_Top || tc == Col_Bottom ) return false;
+		}
+		// down
+		if ( dx == 0 && dy == 1 ) {
+			if ( pc == Col_Bottom || tc == Col_Top ) return false;
+		}
+		// left
+		if ( dx == -1 && dy == 0 ) {
+			if ( pc == Col_Left || tc == Col_Right ) return false;
+		}
+		// right
+		if ( dx == 1 && dy == 0 ) {
+			if ( pc == Col_Right || tc == Col_Left ) return false;
+		}
+		// diagonals...
+		var lc = level.getCollision( px - 1, py );
+		var rc = level.getCollision( px + 1, py );
+		var dc = level.getCollision( px, py + 1 );
+		var uc = level.getCollision( px, py - 1 );
+		// diag up/left
+		if ( dx == -1 && dy == -1 ) {
+			if ( pc == Col_Left || pc == Col_Top ) return false;
+			if ( ((lc == Col_Solid || lc == Col_Right || lc == Col_Top) &&
+				 (uc == Col_Solid || uc == Col_Bottom || uc == Col_Left)) ||
+				 (tc == Col_Bottom || tc == Col_Right) ) return false;
+		}
+		// diag up/right
+		if ( dx == 1 && dy == -1 ) {
+			if ( pc == Col_Right || pc == Col_Top ) return false;
+			if ( ((rc == Col_Solid || rc == Col_Left || rc == Col_Top) &&
+				 (uc == Col_Solid || uc == Col_Bottom || uc == Col_Right)) ||
+				 (tc == Col_Bottom || tc == Col_Left) ) return false;
+		}
+		// diag down/left
+		if ( dx == -1 && dy == 1 ) {
+			if ( pc == Col_Left || pc == Col_Bottom ) return false;
+			if ( ((lc == Col_Solid || lc == Col_Right || lc == Col_Bottom) &&
+				 (dc == Col_Solid || dc == Col_Top || dc == Col_Left)) ||
+				 (tc == Col_Top || tc == Col_Right) ) return false;
+		}
+		// diag down/right
+		if ( dx == 1 && dy == 1 ) {
+			if ( pc == Col_Right || pc == Col_Bottom ) return false;
+			if ( ((rc == Col_Solid || rc == Col_Left || rc == Col_Bottom) &&
+				 (dc == Col_Solid || dc == Col_Top || dc == Col_Right)) ||
+				 (tc == Col_Top || tc == Col_Left) ) return false;
+		}
 
 		return true;
 	}

@@ -15,6 +15,7 @@ import h2d.col.Point;
 import h2d.col.IPoint;
 import h2d.SpriteBatch;
 import h2d.TileGroup;
+import h2d.Text;
 
 import Global as G;
 import Game.IUpdater;
