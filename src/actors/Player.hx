@@ -21,7 +21,7 @@ class Player extends Actor {
 		bumpActors = true;
 		radius = level.GRID / 2.67;
 		friction = 0.72;
-		bumpForce = 0.005;
+		bumpForce = 5e-3;
 
 		trace( 'New player! ${location}' );
 

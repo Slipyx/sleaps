@@ -11,6 +11,7 @@ class Spawner extends Actor {
 		super();
 		spr.tile = Res.skull.toTile();
 		spr.tile.setCenterRatio();
+		radius = 8;
 	}
 
 	function spawnActor() {

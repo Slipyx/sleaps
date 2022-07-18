@@ -31,4 +31,66 @@ class PathFinder {
 
 		return valid;
 	}
+
+	// can los pass from one cell to a neighboring cell
+	public static inline function losCanPass( px: Int, py: Int, tx: Int, ty: Int ): Bool {
+		var level = Level.ME;
+		// initial check
+		if ( px == tx && py == ty )
+			return level.getCollision( tx, ty ) != Col_Solid;
+		// target is solid
+		if ( level.getCollision( tx, ty ) == Col_Solid ) return false;
+		// deltas should always be 0 to +/- 1
+		var dx = tx - px;
+		var dy = ty - py;
+		var pc = level.getCollision( px, py );
+		var tc = level.getCollision( tx, ty );
+		// up
+		if ( dx == 0 && dy == -1 ) {
+			if ( pc == Col_Top || tc == Col_Bottom ) return false;
+		}
+		// down
+		if ( dx == 0 && dy == 1 ) {
+			if ( pc == Col_Bottom || tc == Col_Top ) return false;
+		}
+		// left
+		if ( dx == -1 && dy == 0 ) {
+			if ( pc == Col_Left || tc == Col_Right ) return false;
+		}
+		// right
+		if ( dx == 1 && dy == 0 ) {
+			if ( pc == Col_Right || tc == Col_Left ) return false;
+		}
+		// diagonals...
+		// diag topleft
+		if ( dx == -1 && dy == -1 )
+			if ( !(losCanPass( px, py, px - 1, py ) &&
+					losCanPass( px, py, px, py - 1 ) &&
+					losCanPass( px - 1, py, px - 1, py - 1 ) &&
+					losCanPass( px, py - 1, px - 1, py - 1 )) )
+				return false;
+		// diag topright
+		if ( dx == 1 && dy == -1 )
+			if ( !(losCanPass( px, py, px + 1, py ) &&
+					losCanPass( px, py, px, py - 1 ) &&
+					losCanPass( px + 1, py, px + 1, py - 1 ) &&
+					losCanPass( px, py - 1, px + 1, py - 1 )) )
+				return false;
+		// diag bottomleft
+		if ( dx == -1 && dy == 1 )
+			if ( !(losCanPass( px, py, px - 1, py ) &&
+					losCanPass( px, py, px, py + 1 ) &&
+					losCanPass( px - 1, py, px - 1, py + 1 ) &&
+					losCanPass( px, py + 1, px - 1, py + 1 )) )
+				return false;
+		// diag bottomright
+		if ( dx == 1 && dy == 1 )
+			if ( !(losCanPass( px, py, px + 1, py ) &&
+					losCanPass( px, py, px, py + 1 ) &&
+					losCanPass( px + 1, py, px + 1, py + 1 ) &&
+					losCanPass( px, py + 1, px + 1, py + 1 )) )
+				return false;
+
+		return true;
+	}
 }

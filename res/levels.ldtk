@@ -736,7 +736,7 @@
 									"params": ["Enemy"]
 								}] },
 								{ "__identifier": "maxCount", "__value": 50, "__type": "Int", "__tile": null, "defUid": 43, "realEditorValues": [{ "id": "V_Int", "params": [50] }] },
-								{ "__identifier": "timeout", "__value": 0.2, "__type": "Float", "__tile": null, "defUid": 44, "realEditorValues": [{ "id": "V_Float", "params": [0.2] }] }
+								{ "__identifier": "timeout", "__value": 0.5, "__type": "Float", "__tile": null, "defUid": 44, "realEditorValues": [{ "id": "V_Float", "params": [0.5] }] }
 							]
 						}
 					]

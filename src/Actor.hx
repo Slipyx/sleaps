@@ -66,7 +66,7 @@ class Actor implements IUpdater {
 		cellRatio = new Point( 0, 0 );
 		velocity = new Point( 0, 0 );
 		friction = 0.8; // 0.8
-		bumpForce = 0.25; // 0.25
+		bumpForce = 0.2; // 0.2
 		radius = level.GRID / 2.67;
 		// default tag name is name of class
 		tag = Type.getClassName( Type.getClass( this ) );
@@ -103,6 +103,7 @@ class Actor implements IUpdater {
 		a.onBeginPlay();
 		return a;
 	}
+
 	// spawn by class name string from actors package. note: does NOT call onBeginPlay
 	public static function spawnByName( name: String, ?ownerActor: Actor = null, ?loc: Point = null ) {
 		name = "actors."+name;
@@ -240,6 +241,24 @@ class Actor implements IUpdater {
 
 	public function onUpdate() {}
 
+	// circle to aabb collision check. returns normal and depth from circle to aabb
+	final function circleToAABB( ap: Point, ar: Float, bmin: Point, bmax: Point ) : {c:Bool,n:Point,d:Float} {
+		var m = {c: false, n: null, d: 0.0};
+		var L = new Point( M.clamp( ap.x, bmin.x, bmax.x ), M.clamp( ap.y, bmin.y, bmax.y ) );
+		var ab = L.sub( ap );
+		var d2 = ab.dot( ab );
+		var r2 = ar * ar;
+		if ( d2 < r2 ) {
+			if ( d2 != 0 ) {
+				m.c = true;
+				var d = M.sqrt( d2 );
+				m.d = ar - d;
+				m.n = ab.normalized();
+			}
+		}
+		return m;
+	}
+
 	// actor to actor collisions
 	final function handleActorCollisions() {
 		_curTouching.clear();
@@ -258,18 +277,17 @@ class Actor implements IUpdater {
 					if ( touchActors && (other.touchActors || other.bumpActors) ) {
 						// bumping
 						if ( bumpActors && other.bumpActors ) {
-							var l = M.sqrt( d2 );
-							var depth = r - l;
-							// * 2 since we only apply bumpForce to one actor in each pair
-							var power = depth / (r) * 2;
+							var d = M.sqrt( d2 );
+							var depth = r - d;
+							var power = depth / (r);
 							// normal from this to other
-							var n = l != 0 ? oloc.sub( loc ).multiply( 1.0 / l ) : new Point(0,1);
+							var n = d != 0 ? oloc.sub( loc ).multiply( 1.0 / d ) : new Point(0,1);
 							// if other has 0 bumpforce, treat as static and brute force reposition
 							if ( other.bumpForce == 0 )
 								setLocation( loc.x - (n.x*(depth)), loc.y - (n.y*(depth)) );
 							// use bump force
 							else {
-								// note: should apply opposing bumpForce to both actors?
+								power *= 2; // * 2 since only applied to one actor in each pair
 								velocity.x -= n.x * power * bumpForce;
 								velocity.y -= n.y * power * bumpForce;
 							}
