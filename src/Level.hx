@@ -20,6 +20,8 @@ class Level implements IUpdater {
 	// level size in grid units. determined by Collisions layer
 	public var cellWidth(default,null): Int;
 	public var cellHeight(default,null): Int;
+	// pathfinder
+	public var path(default,null): lib.PathFinder<Point>;
 
 	// fixed size array of actors in level
 	var actors: Vector<Actor>;
@@ -73,6 +75,10 @@ class Level implements IUpdater {
 
 		st = (haxe.Timer.stamp() - st) * 1000;
 		trace( 'Loaded LDtk project in $st ms.' );
+
+		// init pathfinder
+		path = new lib.PathFinder( (x,y)->new Point(x*GRID+8,y*GRID+8) );
+		path.init( cellWidth, cellHeight );
 
 		// call onBeginPlay on all active actors
 		for ( i in 0...numActors ) {

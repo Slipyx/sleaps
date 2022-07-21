@@ -6,6 +6,7 @@ class Enemy extends Actor {
 	var frames: Array<Tile>;
 	var cf = 0.0;
 	var lastPlLoc: Point;
+	var g: h2d.Graphics;
 
 	function new() {
 		super();
@@ -19,23 +20,42 @@ class Enemy extends Actor {
 		spr.tile = Res.ghost.toTile();
 		frames = spr.tile.gridFlatten( 16, -8, -8 );
 		cf = G.rand.uint() % 2;
+		g = new h2d.Graphics();
+		game.scroller.add( g, G.LAYER_TOP );
+	}
+
+	override function onDestroyed() {
+		g.remove();
+		super.onDestroyed();
 	}
 
 	override function onBeginPlay() {
 		super.onBeginPlay();
 		// get ref to player
 		pl = Player.ME;
-		lifeSpan = 8;
+		//lifeSpan = 8;
 	}
 
 	override function onFixedUpdate() {
 		super.onFixedUpdate();
 
 		spr.colorAdd = new h3d.Vector(1);
-		// line of sight
-		if ( lib.PathFinder.checkLine( cellLocation.x, cellLocation.y,
-				pl.cellLocation.x, pl.cellLocation.y, lib.PathFinder.losCanPass ) ) {
-			lastPlLoc = pl.location;
+		/*g.clear();
+		g.beginFill( 0x0000ff );
+		g.lineStyle( 0.5, 0x0000ff, 1 );
+		g.x = g.y = 0;*/
+		// path
+		var path = level.path.getPath( cellLocation.x, cellLocation.y,
+			pl.cellLocation.x, pl.cellLocation.y );
+		/*for ( pi in 0...path.length ) {
+			var p2 = path[cast M.min(pi+1,path.length-1)];
+			var p1 = path[pi];
+			g.drawCircle( p1.x, p1.y, 2 );
+			g.moveTo( p1.x, p1.y );
+			g.lineTo( p2.x, p2.y );
+		}*/
+		if ( path.length > 0 ) {
+			lastPlLoc = path[0]; // only go to first node for now...
 			spr.colorAdd.r = 0;
 		}
 
@@ -52,7 +72,7 @@ class Enemy extends Actor {
 		spr.tile = frames[int(cf) % frames.length];
 		cf += 6 / G.FPS * game.tmod;
 		// fade out
-		spr.alpha = M.min( 1.0, (lifeSpan) / 1 );
+		//spr.alpha = M.min( 1.0, (lifeSpan) / 1 );
 	}
 
 	override function onBump( other: Actor ) {
