@@ -108,9 +108,9 @@ class Game extends hxd.App {
 		// debug text
 		var fnt = Res.font1.toFont();
 		tf = new h2d.Text( fnt );
-		tf.filter = new h2d.filter.Outline( 0.5 );
 		tf.setScale(2);
 		tf.x = tf.y = 1;
+		tf.dropShadow = {dx:1,dy:1,color:0x000000,alpha:1};
 		s2d.add( tf );
 		tf.text = 'hello there world!';
 

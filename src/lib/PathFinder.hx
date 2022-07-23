@@ -24,7 +24,8 @@ class PathFinder<T> {
 		nodes = [];
 		for ( cy in 0...hei )
 		for ( cx in 0...wid ) {
-			if( !losCanPass(cx,cy,cx-1,cy-1) && losCanPass(cx,cy,cx,cy-1) && losCanPass(cx,cy,cx-1,cy)
+			if ( losCanPass(cx,cy,cx,cy) )
+			if ( !losCanPass(cx,cy,cx-1,cy-1) && losCanPass(cx,cy,cx,cy-1) && losCanPass(cx,cy,cx-1,cy)
 				|| !losCanPass(cx,cy,cx+1,cy-1) && losCanPass(cx,cy,cx,cy-1) && losCanPass(cx,cy,cx+1,cy)
 				|| !losCanPass(cx,cy,cx+1,cy+1) && losCanPass(cx,cy,cx,cy+1) && losCanPass(cx,cy,cx+1,cy)
 				|| !losCanPass(cx,cy,cx-1,cy+1) && losCanPass(cx,cy,cx,cy+1) && losCanPass(cx,cy,cx-1,cy) )

@@ -39,31 +39,38 @@ class Enemy extends Actor {
 	override function onFixedUpdate() {
 		super.onFixedUpdate();
 
-		spr.colorAdd = new h3d.Vector(1);
-		/*g.clear();
+		g.clear();
 		g.beginFill( 0x0000ff );
 		g.lineStyle( 0.5, 0x0000ff, 1 );
-		g.x = g.y = 0;*/
+		g.x = g.y = 0;
 		// path
 		var path = level.path.getPath( cellLocation.x, cellLocation.y,
 			pl.cellLocation.x, pl.cellLocation.y );
-		/*for ( pi in 0...path.length ) {
-			var p2 = path[cast M.min(pi+1,path.length-1)];
-			var p1 = path[pi];
-			g.drawCircle( p1.x, p1.y, 2 );
+		// draw path
+		var p1 = cellLocation.toPoint( 16 ).add( new Point(8,8) );
+		var p2 = p1;
+		for ( pi in 0...path.length ) {
+			p2 = path[pi];
+			//p2 = path[cast M.min(pi+1,path.length-1)];
+			g.drawCircle( p2.x, p2.y, 2 );
 			g.moveTo( p1.x, p1.y );
 			g.lineTo( p2.x, p2.y );
-		}*/
-		if ( path.length > 0 ) {
-			lastPlLoc = path[0]; // only go to first node for now...
-			spr.colorAdd.r = 0;
+			p1 = p2;
+		}
+		for ( i in 0...path.length ) {
+			var p = path[i];
+			if ( cellLocation.x != p.x && cellLocation.y != p.y ) {
+				lastPlLoc = p; break;
+			}
 		}
 
+		spr.colorAdd = new h3d.Vector(1);
 		var dirToP = lastPlLoc.sub( location ).normalized();
 		var dist = lastPlLoc.distanceSq( location );
 		if ( dist > 256 ) {
 			velocity.x += dirToP.x * 0.02;
 			velocity.y += dirToP.y * 0.02;
+			spr.colorAdd.r = 0;
 		}
 	}
 

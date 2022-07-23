@@ -77,7 +77,7 @@ class Level implements IUpdater {
 		trace( 'Loaded LDtk project in $st ms.' );
 
 		// init pathfinder
-		path = new lib.PathFinder( (x,y)->new Point(x*GRID+8,y*GRID+8) );
+		path = new lib.PathFinder( (x,y)->new Point(x*GRID+GRID/2,y*GRID+GRID/2) );
 		path.init( cellWidth, cellHeight );
 
 		// call onBeginPlay on all active actors
