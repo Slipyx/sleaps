@@ -27,7 +27,7 @@ class Player extends Actor {
 
 		cfwd = new Point(1,0);
 		tfwd = new Point(1,0);
-		life = 100;
+		life = 600;
 
 		spr.tile = Res.pchar.toTile();
 		//spr.t = Tile.autoCut( Res.char.toBitmap(), 16, 16 ).main;
@@ -116,6 +116,9 @@ class Player extends Actor {
 
 		game.camLocation.x = M.lerp( game.camLocation.x, spr.x, 0.33 );
 		game.camLocation.y = M.lerp( game.camLocation.y, spr.y, 0.33 );
+
+		// life countdown
+		life -= game.dt;
 	}
 
 	var mvdir: Point = new Point(); // requested move dir
@@ -195,16 +198,28 @@ class Player extends Actor {
 		}*/
 
 		spr.tile = frames[int(fi)];
+
+		if ( blinkCD <= 0 ) {
+			blinkCol *= M.pow( 0.6, game.tmod );
+		} else { blinkCD -= game.dt; }
+
+		spr.colorAdd.load( new h3d.Vector() );
+		spr.colorAdd.r += blinkCol;
+		spr.colorAdd.g += blinkCol;
+		spr.colorAdd.b += blinkCol;
 	}
 
+	var blinkCD = 0.0;
+	var blinkCol = 0.0;
 	override function takeDamage( dmg: Float, ?from: Actor ) {
-		dmg *= 0.5;
+		blinkCD = 0.06;
+		blinkCol = 0.5;
 		super.takeDamage( dmg, from );
 	}
 
 	override function onDie() {
 		trace( 'Player died!?' );
-		life = 100;
+		life = 600;
 		//super.onDie();
 	}
 

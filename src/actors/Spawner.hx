@@ -22,7 +22,7 @@ class Spawner extends Actor {
 	}
 
 	override function onUpdate() {
-		_ct += game.tmod / G.FPS;
+		_ct += game.dt;
 		if ( className == null ) destroy();
 		if ( _ct >= timeout && ownees.length < maxCount ) {
 			_ct = 0;

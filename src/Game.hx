@@ -15,6 +15,7 @@ class Game extends hxd.App {
 	// timing
 	// fixed update tmod accumulator
 	var fixedAccum = 0.0;
+	public var dt(default, null): Float;
 	public var tmod(default, null): Float;
 	public var fixedTmod(get, null): Float;
 	inline function get_fixedTmod() return G.FPS / G.FIXED_FPS;
@@ -170,19 +171,18 @@ class Game extends hxd.App {
 	function fixedUpdate() {
 		level.onFixedUpdate();
 
-		tfup += fixedTmod;
-		if ( tfup > 3 ) {
-			tf.text = 'FPS: ${int(hxd.Timer.fps())} DC: ${engine.drawCalls}\n'+
+		tfup += fixedTmod / G.FPS;
+		if ( tfup > 0.1 ) {
+			tf.text = 'FPS: ${int(hxd.Timer.fps())} DC: ${engine.drawCalls}\n' +
 			#if hl
-				'VM: ${int(hl.Gc.stats().currentMemory/1048576.0)}MB\n'+
+				'VM: ${int(hl.Gc.stats().currentMemory/1048576.0)}MB\n' +
 			#end
 				'GPU: ${int(engine.mem.stats().totalMemory/1048576.0)}MB';
 
 			var p: actors.Player =null;
 			for(a in level.allActors(actors.Player)){p=cast a;break;}
 			if ( p != null )
-				tf.text += '\np:${p.cellLocation},${p.cellRatio}\nv:${p.velocity}\nlf:${int(p.life)}';
-			
+				tf.text += '\np:${p.cellLocation},${p.cellRatio}\nv:${p.velocity}\nlf:${M.ceil(p.life)}';
 			tfup = 0;
 		}
 	}
@@ -190,6 +190,7 @@ class Game extends hxd.App {
 	override function update( dt: Float ) {
 		super.update( dt );
 
+		this.dt = dt;
 		tmod = hxd.Timer.tmod;
 		ftime += tmod;
 

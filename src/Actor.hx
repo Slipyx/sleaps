@@ -78,6 +78,7 @@ class Actor implements IUpdater {
 		_lastFixedLocation = location.clone();
 
 		spr = new Sprite( game.defaultTile );
+		spr.colorAdd = new h3d.Vector();
 		// snap spr pos to spawn loc
 		spr.x = _st_location.x;
 		spr.y = _st_location.y;
@@ -360,7 +361,7 @@ class Actor implements IUpdater {
 		spr.visible = visible;
 		// lifespan
 		if ( alive && lifeSpan > 0 ) {
-			lifeSpan -= game.tmod / G.FPS;
+			lifeSpan -= game.dt;
 			if ( lifeSpan <= 0 ) {
 				lifeSpan = 0;
 				life = 0; // onDie
