@@ -144,6 +144,14 @@ class Player extends Actor {
 			}
 			mvdir.load( cfwd );
 		}
+
+		// attack
+		if ( Key.isPressed( Key.MOUSE_RIGHT ) ) {
+			var mdir = new Point( game.mouseX, game.mouseY ).sub( location ).normalized();
+			var p = spawn( Projectile, this, location.add( mdir.multiply( 12 ) ) );
+			p.velocity.x = mdir.x * 0.7;
+			p.velocity.y = mdir.y * 0.7;
+		}
 	}
 
 	override function onFixedUpdate() {
