@@ -151,6 +151,7 @@ class Player extends Actor {
 			var p = spawn( Projectile, this, location.add( mdir.multiply( 12 ) ) );
 			p.velocity.x = mdir.x * 0.7;
 			p.velocity.y = mdir.y * 0.7;
+			p.spr.rotation = M.atan2( mdir.y, mdir.x ) + (M.PI/2);
 		}
 	}
 

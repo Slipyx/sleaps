@@ -8,10 +8,10 @@ class Projectile extends Actor {
 		bumpActors = true;
 		touchActors = true;
 		friction = 0.92;
-		radius = 4;
-		lifeSpan = 10;
+		radius = 3;
+		lifeSpan = 5;
 		bumpForce = 0.1;
-		spr.tile = Res.rock.toTile();
+		spr.tile = Res.proj.toTile();
 		spr.tile.setCenterRatio();
 	}
 

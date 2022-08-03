@@ -101,8 +101,11 @@ class Level implements IUpdater {
 		var tg = new TileGroup( Res.loader.load( layer.__tilesetRelPath ).toTile() );
 		for ( t in data ) {
 			var sz = layer.__gridSize;
-			tg.add( t.px[0] + layer.__pxTotalOffsetX, t.px[1] + layer.__pxTotalOffsetY,
-				tg.tile.sub( t.src[0], t.src[1], sz, sz ) );
+			var tl = tg.tile.sub( t.src[0], t.src[1], sz, sz );
+			tl.xFlip = t.f & 1 == 1;
+			tl.yFlip = t.f & 2 == 2;
+			tl.dx = 0; tl.dy = 0;
+			tg.add( t.px[0] + layer.__pxTotalOffsetX, t.px[1] + layer.__pxTotalOffsetY, tl );
 		}
 		return tg;
 	}
