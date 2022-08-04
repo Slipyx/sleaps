@@ -7,11 +7,13 @@ class Player extends Actor {
 	var fi: Float;
 
 	var g2: h2d.Graphics;
+	var statText: h2d.Text;
 	// current, target forward dir
 	var cfwd: Point;
 	var tfwd: Point;
 	var tps = 5; // 5
-	var afps = 6; // 6
+	var afps = 12; // 6
+	var atkCD = 0.0;
 
 	public function new() {
 		super();
@@ -25,6 +27,9 @@ class Player extends Actor {
 
 		trace( 'New player! ${location}' );
 
+		statText = new h2d.Text( game.font0 );
+		statText.dropShadow = {dx:1,dy:1,color:0x000000,alpha:1};
+		game.uiRoot.add( statText, G.LAYER_UI );
 		cfwd = new Point(1,0);
 		tfwd = new Point(1,0);
 		life = 600;
@@ -119,6 +124,11 @@ class Player extends Actor {
 
 		// life countdown
 		life -= game.dt;
+		// attack cooldown
+		if ( atkCD > 0 ) atkCD -= game.dt;
+
+		// stat text
+		statText.text = 'LIFE ${M.ceil( life )}';
 	}
 
 	var mvdir: Point = new Point(); // requested move dir
@@ -134,25 +144,25 @@ class Player extends Actor {
 		mvdir.set();
 		if ( Key.isDown( Key.MOUSE_LEFT ) ) {
 			var dst = m.distanceSq( scrc );
-			if ( dst > 0 ) {
-				tfwd.x = m.x - scrc.x;
-				tfwd.y = m.y - scrc.y;
-				tfwd.normalize();
-				cfwd.lerp( cfwd, tfwd, 0.45 );
-				cfwd.normalize();
-				g2.rotation = M.atan2( cfwd.y, cfwd.x );
+			if ( dst > 0 ) {				
+				tfwd = m.sub( scrc ).normalized();
 			}
 			mvdir.load( cfwd );
 		}
 
 		// attack
-		if ( Key.isPressed( Key.MOUSE_RIGHT ) ) {
+		if ( atkCD <= 0.0 && Key.isDown( Key.MOUSE_RIGHT ) ) {
 			var mdir = new Point( game.mouseX, game.mouseY ).sub( location ).normalized();
-			var p = spawn( Projectile, this, location.add( mdir.multiply( 12 ) ) );
-			p.velocity.x = mdir.x * 0.7;
-			p.velocity.y = mdir.y * 0.7;
+			var p = spawn( Projectile, this, location.add( mdir.multiply( 8 ) ) );
+			p.velocity = mdir.multiply( 0.55 );
 			p.spr.rotation = M.atan2( mdir.y, mdir.x ) + (M.PI/2);
+			tfwd.load( mdir );
+			atkCD = 0.33;
 		}
+
+		cfwd.lerp( cfwd, tfwd, 0.45 );
+		cfwd.normalize();
+		g2.rotation = M.atan2( cfwd.y, cfwd.x );
 	}
 
 	override function onFixedUpdate() {
@@ -208,6 +218,8 @@ class Player extends Actor {
 
 		spr.tile = frames[int(fi)];
 
+		statText.y = game.window.height / G.SCALE - 8;
+
 		if ( blinkCD <= 0 ) {
 			blinkCol *= M.pow( 0.6, game.tmod );
 		} else { blinkCD -= game.dt; }
@@ -235,6 +247,7 @@ class Player extends Actor {
 	override function onDestroyed() {
 		trace( 'Player destroyed!' );
 		frames = null;
+		statText.remove();
 		super.onDestroyed();
 	}
 }

@@ -37,6 +37,7 @@ class Game extends hxd.App {
 	public var camLocation: Point;
 
 	public var defaultTile(default, null): Tile;
+	public var font0(default, null): h2d.Font;
 	var blurFilter: h2d.filter.Blur;
 	var crtShader: CrtShader;
 
@@ -107,8 +108,8 @@ class Game extends hxd.App {
 		onResize();
 
 		// debug text
-		var fnt = Res.font1.toFont();
-		tf = new h2d.Text( fnt );
+		font0 = Res.font1.toFont();
+		tf = new h2d.Text( font0 );
 		tf.setScale(2);
 		tf.x = tf.y = 1;
 		tf.dropShadow = {dx:1,dy:1,color:0x000000,alpha:1};
@@ -182,7 +183,7 @@ class Game extends hxd.App {
 			var p: actors.Player =null;
 			for(a in level.allActors(actors.Player)){p=cast a;break;}
 			if ( p != null )
-				tf.text += '\np:${p.cellLocation},${p.cellRatio}\nv:${p.velocity}\nlf:${M.ceil(p.life)}';
+				tf.text += '\np:${p.cellLocation},${p.cellRatio}\nv:${p.velocity}';
 			tfup = 0;
 		}
 	}
