@@ -44,8 +44,8 @@ class Enemy extends Actor {
 		g.lineStyle( 0.5, 0x0000ff, 1 );
 		g.x = g.y = 0;*/
 		// path
-		//var path = level.path.getPath( cellLocation.x, cellLocation.y,
-			//pl.cellLocation.x, pl.cellLocation.y );
+		var path = level.path.getPath( cellLocation.x, cellLocation.y,
+			pl.cellLocation.x, pl.cellLocation.y );
 		// draw path
 		/*var p1 = cellLocation.toPoint( 16 ).add( new Point(8,8) );
 		var p2 = p1;
@@ -56,7 +56,7 @@ class Enemy extends Actor {
 			g.lineTo( p2.x, p2.y );
 			p1 = p2;
 		}*/
-		lastPlLoc = pl.location;
+		lastPlLoc = path[0];
 		var dist = lastPlLoc.distanceSq( location );
 
 		spr.colorAdd = new h3d.Vector(1);
@@ -90,18 +90,18 @@ class Enemy extends Actor {
 		var cy = cellLocation.y;
 
 		// right blocked
-		if ( cellRatio.x > 0.55 ) {
+		if ( cellRatio.x > 0.5 ) {
 			var rightcol = level.getCollision( cx+1, cy );
 			if ( rightcol == Col_Solid || curcol == Col_Right || rightcol == Col_Left ) {
-				cellRatio.x = 0.55;
+				cellRatio.x = 0.5;
 			}
 		}
 
 		// left blocked
-		if ( cellRatio.x < 0.45 ) {
+		if ( cellRatio.x < 0.5 ) {
 			var leftcol = level.getCollision( cx-1, cy );
 			if ( leftcol == Col_Solid || curcol == Col_Left || leftcol == Col_Right ) {
-				cellRatio.x = 0.45;
+				cellRatio.x = 0.5;
 			}
 		}
 	}
@@ -113,17 +113,17 @@ class Enemy extends Actor {
 		var cy = cellLocation.y;
 
 		// bottom blocked
-		if ( cellRatio.y > 0.55 ) {
+		if ( cellRatio.y > 0.5 ) {
 			var bottomcol = level.getCollision( cx, cy+1 );
 			if ( bottomcol == Col_Solid || curcol == Col_Bottom || bottomcol == Col_Top ) {
-				cellRatio.y = 0.55;
+				cellRatio.y = 0.5;
 			}
 		}
 		// top blocked
-		if ( cellRatio.y < 0.45 ) {
+		if ( cellRatio.y < 0.5 ) {
 			var topcol = level.getCollision( cx, cy-1 );
 			if ( topcol == Col_Solid || curcol == Col_Top || topcol == Col_Bottom ) {
-				cellRatio.y = 0.45;
+				cellRatio.y = 0.5;
 			}
 		}
 	}
