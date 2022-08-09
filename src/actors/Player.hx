@@ -38,8 +38,8 @@ class Player extends Actor {
 		//spr.t = Tile.autoCut( Res.char.toBitmap(), 16, 16 ).main;
 		//be.t.setCenterRatio();
 		frames = new Array<Tile>();
-		for ( y in 0...4 )
-			for ( x in 0...4 ) {
+		for ( y in 0...(int(spr.tile.height/32)) )
+			for ( x in 0...(int(spr.tile.width/16)) ) {
 				frames.push( spr.tile.sub( x*16,y*32,16,32, -8,-24 ) );
 			}
 		fi = 0;
@@ -59,6 +59,7 @@ class Player extends Actor {
 		super.onBeginPlay();
 		//lifeSpan = 4;
 		//takeDamage( 100 );
+		spr.removeChildren();
 	}
 
 	override function onTouch( other: Actor ) {
@@ -183,26 +184,26 @@ class Player extends Actor {
 		var qang = (M.PI / 4.0);
 		var ang = M.atan2( cfwd.y, cfwd.x );
 		if ( ang > (-qang) && ang < (qang) ) { // right
-			if ( astart != 4 ) fi = 4;
-			astart = 4;
-		}
-		if ( ang > (qang) && ang < (qang * 3) ) { // down
-			if ( astart != 0 ) fi = 0;
-			astart = 0;
-		}
-		if ( ang > (-qang * 3) && ang < (-qang) ) { // up
 			if ( astart != 8 ) fi = 8;
 			astart = 8;
 		}
+		if ( ang > (qang) && ang < (qang * 3) ) { // down
+			if ( astart != 1 ) fi = 1;
+			astart = 1;
+		}
+		if ( ang > (-qang * 3) && ang < (-qang) ) { // up
+			if ( astart != 15 ) fi = 15;
+			astart = 15;
+		}
 		if ( ang > (qang * 3) || ang < (-qang * 3) ) { // left
-			if ( astart != 12 ) fi = 12;
-			astart = 12;
+			if ( astart != 22 ) fi = 22;
+			astart = 22;
 		}
 
 		var arate = afps / G.FPS * game.tmod; // fps
 		if ( velocity.length() <= 0.01 ) {arate = 0; fi = astart;}
 		// frame start and end
-		var aframes = 4;
+		var aframes = 6;
 		var aend = astart + aframes-1;
 		// loop
 		fi += arate;
