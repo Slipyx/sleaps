@@ -12,7 +12,7 @@ class Player extends Actor {
 	var cfwd: Point;
 	var tfwd: Point;
 	var tps = 5; // 5
-	var afps = 12; // 6
+	var afps = 10; // 6
 	var atkCD = 0.0;
 
 	public function new() {
@@ -181,10 +181,11 @@ class Player extends Actor {
 	override function onPostUpdate() {
 		super.onPostUpdate();
 
+		var flip = false;
 		var qang = (M.PI / 4.0);
 		var ang = M.atan2( cfwd.y, cfwd.x );
 		if ( ang > (-qang) && ang < (qang) ) { // right
-			if ( astart != 8 ) fi = 8;
+			if ( astart != 8 ) { fi = 8; }
 			astart = 8;
 		}
 		if ( ang > (qang) && ang < (qang * 3) ) { // down
@@ -196,12 +197,13 @@ class Player extends Actor {
 			astart = 15;
 		}
 		if ( ang > (qang * 3) || ang < (-qang * 3) ) { // left
-			if ( astart != 22 ) fi = 22;
-			astart = 22;
+			if ( astart != 8 ) { fi = 8; }
+			astart = 8;
+			flip = true;
 		}
 
 		var arate = afps / G.FPS * game.tmod; // fps
-		if ( velocity.length() <= 0.01 ) {arate = 0; fi = astart;}
+		if ( velocity.length() <= 0.01 ) {arate = 0; fi = astart-1;}
 		// frame start and end
 		var aframes = 6;
 		var aend = astart + aframes-1;
@@ -218,6 +220,8 @@ class Player extends Actor {
 		}*/
 
 		spr.tile = frames[int(fi)];
+		if ( flip != spr.tile.xFlip )
+			spr.tile.flipX();
 
 		statText.y = game.window.height / G.SCALE - 8;
 
